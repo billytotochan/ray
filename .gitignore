@@ -1,0 +1,6 @@
+Release/
+local/
+ray.*
+Debug/
+simpleSamples/
+UpgradeLog.XML
