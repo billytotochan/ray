@@ -168,3 +168,15 @@ void RayTracer::tracePixel( int i, int j )
 	pixel[1] = (int)( 255.0 * col[1]);
 	pixel[2] = (int)( 255.0 * col[2]);
 }
+
+vec3f RayTracer::traceReflection(const ray &incidentRay,
+	const isect &reflectionParam)
+{
+	return vec3f();
+}
+
+vec3f RayTracer::traceRefracttion(const ray &incidentRay,
+	const isect &refractionParam)
+{
+	return vec3f();
+}

@@ -26,6 +26,12 @@ public:
 
 	bool sceneLoaded();
 
+	vec3f traceReflection(const ray &incidentRay,
+		const isect &reflectionParam);
+
+	vec3f traceRefracttion(const ray &incidentRay,
+		const isect &refractionParam);
+
 private:
 	unsigned char *buffer;
 	int buffer_width, buffer_height;
