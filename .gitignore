@@ -2,7 +2,6 @@ Release/
 local/
 Debug/
 simpleSamples/
-UpgradeLog.XML
 sample_ray.exe
 ray.vcxproj*
 ray.vcproj*
@@ -16,3 +15,5 @@ ray.sln*
 ray.suo*
 ray.opensdf
 ray.v12*
+.gitattributes
+UpgradeLog.*
