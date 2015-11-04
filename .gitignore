@@ -17,3 +17,17 @@ ray.opensdf
 ray.v12*
 .gitattributes
 UpgradeLog.*
+rayFiles/box.ray
+rayFiles/box_cyl_opaque_shadow.ray
+rayFiles/box_cyl_reflect.ray
+rayFiles/box_cyl_transp_shadow.ray
+rayFiles/box_dist_atten.ray
+rayFiles/cone.ray
+rayFiles/cube.ray
+rayFiles/cyl_ambient.ray
+rayFiles/cyl_diff_spec.ray
+rayFiles/cyl_diffuse.ray
+rayFiles/cyl_emissive.ray
+rayFiles/cylinder.ray
+rayFiles/recurse_depth.ray
+rayFiles/sphere_refract.ray
