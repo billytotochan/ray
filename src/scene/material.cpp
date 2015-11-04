@@ -20,7 +20,23 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 	vec3f color = vec3f( 0.0, 0.0, 0.0);
 	color += ke;
 	color += ka;
-	color += r.getDirection().normalize() * i.N * kd;
+
+	vec3f point = r.at(i.t);
+	vec3f zeroVector = vec3f(0.0,0.0,0.0);
+
+	list<Light*>::const_iterator it;
+	for (it = scene->beginLights(); it != scene->endLights(); it++){
+
+		vec3f incidentLight = ((*it)->getDirection( point)).normalize();
+
+		vec3f lightColor = (*it)->getColor(point);
+
+		vec3f diffuseIndex = max( kd * i.N.normalize().dot( incidentLight), zeroVector);
+
+		for (int i = 0; i < 3; i++){
+			color[i] = lightColor[i] * diffuseIndex[i];
+		}
+	}
 
 	return color;
 }
