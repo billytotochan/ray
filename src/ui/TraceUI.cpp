@@ -227,7 +227,10 @@ TraceUI::TraceUI() {
 	// init.
 	m_nDepth = 0;
 	m_nSize = 150;
-	m_mainWindow = new Fl_Window(100, 40, 320, 100, "Ray <Not Loaded>");
+	m_dAmbientLightRed = 0.1;
+	m_dAmbientLightGreen = 0.1;
+	m_dAmbientLightBlue = 0.1;
+	m_mainWindow = new Fl_Window(100, 40, 320, 200, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar
 		m_menubar = new Fl_Menu_Bar(0, 0, 320, 25);
@@ -266,10 +269,10 @@ TraceUI::TraceUI() {
 		m_ambientLightRedSlider->labelsize(12);
 		m_ambientLightRedSlider->minimum(0);
 		m_ambientLightRedSlider->maximum(1);
-		m_ambientLightRedSlider->step(0.1);
+		m_ambientLightRedSlider->step(0.01);
 		m_ambientLightRedSlider->value(m_dAmbientLightRed);
 		m_ambientLightRedSlider->align(FL_ALIGN_RIGHT);
-		m_ambientLightGreenSlider->callback(cb_ambientLightRedSlides);
+		m_ambientLightRedSlider->callback(cb_ambientLightRedSlides);
 
 		m_ambientLightGreenSlider = new Fl_Value_Slider(10, 105, 180, 20, "Ambient Green");
 		m_ambientLightGreenSlider->user_data((void*)(this));	// record self to be used by static callback functions
@@ -278,19 +281,19 @@ TraceUI::TraceUI() {
 		m_ambientLightGreenSlider->labelsize(12);
 		m_ambientLightGreenSlider->minimum(0);
 		m_ambientLightGreenSlider->maximum(1);
-		m_ambientLightGreenSlider->step(0.1);
+		m_ambientLightGreenSlider->step(0.01);
 		m_ambientLightGreenSlider->value(m_dAmbientLightGreen);
 		m_ambientLightGreenSlider->align(FL_ALIGN_RIGHT);
 		m_ambientLightGreenSlider->callback(cb_ambientLightGreenSlides);
 
-		m_ambientLightBlueSlider = new Fl_Value_Slider(10, 80, 180, 20, "Ambient Blue");
+		m_ambientLightBlueSlider = new Fl_Value_Slider(10, 130, 180, 20, "Ambient Blue");
 		m_ambientLightBlueSlider->user_data((void*)(this));	// record self to be used by static callback functions
 		m_ambientLightBlueSlider->type(FL_HOR_NICE_SLIDER);
 		m_ambientLightBlueSlider->labelfont(FL_COURIER);
 		m_ambientLightBlueSlider->labelsize(12);
-		m_ambientLightRedSlider->minimum(0);
+		m_ambientLightBlueSlider->minimum(0);
 		m_ambientLightBlueSlider->maximum(1);
-		m_ambientLightBlueSlider->step(0.1);
+		m_ambientLightBlueSlider->step(0.01);
 		m_ambientLightBlueSlider->value(m_dAmbientLightBlue);
 		m_ambientLightBlueSlider->align(FL_ALIGN_RIGHT);
 		m_ambientLightBlueSlider->callback(cb_ambientLightBlueSlides);
