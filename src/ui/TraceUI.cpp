@@ -92,6 +92,19 @@ void TraceUI::cb_depthSlides(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_nDepth=int( ((Fl_Slider *)o)->value() ) ;
 }
 
+void TraceUI::cb_ambientLightRedSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_dAmbientLightRed = double(((Fl_Slider *)o)->value());
+}
+void TraceUI::cb_ambientLightGreenSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_dAmbientLightGreen = double(((Fl_Slider *)o)->value());
+}
+void TraceUI::cb_ambientLightBlueSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_dAmbientLightBlue = double(((Fl_Slider *)o)->value());
+}
+
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
 	char buffer[256];
@@ -237,14 +250,50 @@ TraceUI::TraceUI() {
 		m_sizeSlider = new Fl_Value_Slider(10, 55, 180, 20, "Size");
 		m_sizeSlider->user_data((void*)(this));	// record self to be used by static callback functions
 		m_sizeSlider->type(FL_HOR_NICE_SLIDER);
-        m_sizeSlider->labelfont(FL_COURIER);
-        m_sizeSlider->labelsize(12);
+		m_sizeSlider->labelfont(FL_COURIER);
+		m_sizeSlider->labelsize(12);
 		m_sizeSlider->minimum(64);
 		m_sizeSlider->maximum(512);
 		m_sizeSlider->step(1);
 		m_sizeSlider->value(m_nSize);
 		m_sizeSlider->align(FL_ALIGN_RIGHT);
 		m_sizeSlider->callback(cb_sizeSlides);
+
+		m_ambientLightRedSlider = new Fl_Value_Slider(10, 80, 180, 20, "Ambient Red");
+		m_ambientLightRedSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_ambientLightRedSlider->type(FL_HOR_NICE_SLIDER);
+		m_ambientLightRedSlider->labelfont(FL_COURIER);
+		m_ambientLightRedSlider->labelsize(12);
+		m_ambientLightRedSlider->minimum(0);
+		m_ambientLightRedSlider->maximum(1);
+		m_ambientLightRedSlider->step(0.1);
+		m_ambientLightRedSlider->value(m_dAmbientLightRed);
+		m_ambientLightRedSlider->align(FL_ALIGN_RIGHT);
+		m_ambientLightGreenSlider->callback(cb_ambientLightRedSlides);
+
+		m_ambientLightGreenSlider = new Fl_Value_Slider(10, 105, 180, 20, "Ambient Green");
+		m_ambientLightGreenSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_ambientLightGreenSlider->type(FL_HOR_NICE_SLIDER);
+		m_ambientLightGreenSlider->labelfont(FL_COURIER);
+		m_ambientLightGreenSlider->labelsize(12);
+		m_ambientLightGreenSlider->minimum(0);
+		m_ambientLightGreenSlider->maximum(1);
+		m_ambientLightGreenSlider->step(0.1);
+		m_ambientLightGreenSlider->value(m_dAmbientLightGreen);
+		m_ambientLightGreenSlider->align(FL_ALIGN_RIGHT);
+		m_ambientLightGreenSlider->callback(cb_ambientLightGreenSlides);
+
+		m_ambientLightBlueSlider = new Fl_Value_Slider(10, 80, 180, 20, "Ambient Blue");
+		m_ambientLightBlueSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_ambientLightBlueSlider->type(FL_HOR_NICE_SLIDER);
+		m_ambientLightBlueSlider->labelfont(FL_COURIER);
+		m_ambientLightBlueSlider->labelsize(12);
+		m_ambientLightRedSlider->minimum(0);
+		m_ambientLightBlueSlider->maximum(1);
+		m_ambientLightBlueSlider->step(0.1);
+		m_ambientLightBlueSlider->value(m_dAmbientLightBlue);
+		m_ambientLightBlueSlider->align(FL_ALIGN_RIGHT);
+		m_ambientLightBlueSlider->callback(cb_ambientLightBlueSlides);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));
