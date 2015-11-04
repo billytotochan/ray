@@ -17,10 +17,6 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 	// shading model, including the contributions of all the light sources.
     // You will need to call both distanceAttenuation() and shadowAttenuation()
     // somewhere in your code in order to compute shadows and light falloff.
-	vec3f color = vec3f( 0.0, 0.0, 0.0);
-	color += ke;
-	color += ka;
-	color += r.getDirection().normalize() * i.N * kd;
 
-	return color;
+	return kd;
 }
