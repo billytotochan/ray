@@ -41,16 +41,12 @@ public:
 
 	int			getSize();
 	int			getDepth();
-	bool		isEnableReflection();
-	bool		isEnableRefraction();
 
 private:
 	RayTracer*	raytracer;
 
 	int			m_nSize;
 	int			m_nDepth;
-	bool		m_bIsEnableReflection;
-	bool		m_bIsEnableRefraction;
 
 // static class members
 	static Fl_Menu_Item menuitems[];

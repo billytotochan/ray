@@ -195,16 +195,6 @@ int TraceUI::getDepth()
 	return m_nDepth;
 }
 
-bool TraceUI::isEnableReflection()
-{
-	return m_bIsEnableReflection;
-}
-
-bool TraceUI::isEnableRefraction()
-{
-	return m_bIsEnableRefraction;
-}
-
 // menu definition
 Fl_Menu_Item TraceUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
