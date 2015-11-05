@@ -265,23 +265,24 @@ public:
 	bool intersect( const ray& r, isect& i ) const;
 	void initScene();
 
-	void addAmbientLight( vec3f& color);
-	vec3f getAmbientLight() const;
-
 	list<Light*>::const_iterator beginLights() const { return lights.begin(); }
 	list<Light*>::const_iterator endLights() const { return lights.end(); }
         
 	Camera *getCamera() { return &camera; }
 
-	
+	void setAmbientLight(vec3f& v);
+	vec3f getAmbientLight() const;
+	void setAmbientLightRed(double d);
+	void setAmbientLightGreen(double d);
+	void setAmbientLightBlue(double d);
 
 private:
     list<Geometry*> objects;
 	list<Geometry*> nonboundedobjects;
 	list<Geometry*> boundedobjects;
     list<Light*> lights;
+	Camera camera;
 	vec3f ambientLight;
-    Camera camera;
 	
 	// Each object in the scene, provided that it has hasBoundingBoxCapability(),
 	// must fall within this bounding box.  Objects that don't have hasBoundingBoxCapability()

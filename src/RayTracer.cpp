@@ -17,13 +17,13 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 {
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
-	return traceRay( scene, r, vec3f(1.0,1.0,1.0), 0 , 1.0).clamp();
+	return traceRay( scene, r, vec3f(1.0,1.0,1.0), m_nDepth, 1.0 ).clamp();
 }
 
 // Do recursive ray tracing!  You'll want to insert a lot of code here
 // (or places called from here) to handle reflection, refraction, etc etc.
 vec3f RayTracer::traceRay( Scene *scene, const ray& r, 
-	const vec3f& thresh, int depth, double prev_index )
+	const vec3f& thresh, int depth, double prev_index)
 {
 	isect i;
 
@@ -40,30 +40,39 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		// rays.
 
 		const Material& m = i.getMaterial();
-		vec3f incident_kd = m.shade(scene, r, i);
-		/*
-		vec3f incidentDirection = r.getDirection().normalize();
-		vec3f reflectedPosition = r.at(i.t) + RAY_EPSILON * i.N.normalize();
-		vec3f reflectedDirection = (incidentDirection + 2 * (-incidentDirection.dot(i.N.normalize()) * i.N.normalize())).normalize();
-		ray reflectednRay(reflectedPosition, reflectedDirection);
-		vec3f reflected_kd = traceRay(scene, reflectednRay, thresh, depth - 1, m.index);
-		incident_kd = prod(m.kr, reflected_kd);
-
-		double n_i = (m.index == prev_index ? m.index : 1.0);
-		double n_t = (m.index == prev_index ? 1.0 : m.index);
-		double n_r = n_i / n_t;
-		double c = -i.N.dot(incidentDirection) / (incidentDirection.length() * i.N.length());
-		vec3f refractedPosition = r.at(i.t) - RAY_EPSILON * i.N.normalize();
-
-		if (1 - pow(n_r, 2) * (1 - pow(c, 2)) > RAY_EPSILON) {
-			vec3f refractedDirection = n_r * incidentDirection + (n_r * c - sqrt(1 - pow(n_r, 2) * (1 - pow(c, 2)))) * i.N;
-			ray refractedRay(refractedPosition, refractedDirection);
-			vec3f refracted_kd = traceRay(scene, refractedRay, thresh, depth - 1, m.index);
-			incident_kd = prod(m.kt, refracted_kd);
+		vec3f incidentColor = m.shade(scene, r, i);
+		if (depth < m_nDepth) {
+			return incidentColor;
 		}
-		*/
+		
+		vec3f incidentDirection = r.getDirection().normalize();
+		
+		if (!m.kr.iszero()) {
+			vec3f reflectedPosition = r.at(i.t) + RAY_EPSILON * i.N.normalize();
+			vec3f reflectedDirection = (incidentDirection + 2 * (-incidentDirection.dot(i.N.normalize()) * i.N.normalize())).normalize();
+			ray reflectednRay(reflectedPosition, reflectedDirection);
+			vec3f reflectedColor = traceRay(scene, reflectednRay, thresh, depth - 1, m.index);
+			incidentColor += prod(m.kr, reflectedColor);
+		}
 
-		return incident_kd.clamp();
+		if (!m.kt.iszero()) {
+			double n_i = (m.index == prev_index ? m.index : 1.0);
+			double n_t = (m.index == prev_index ? 1.0 : m.index);
+			double n_r = n_i / n_t;
+			double c = -i.N.dot(incidentDirection) / (incidentDirection.length() * i.N.length());
+			vec3f refractedPosition = r.at(i.t) - RAY_EPSILON * i.N.normalize();
+
+			if (1 - pow(n_r, 2) * (1 - pow(c, 2)) > RAY_EPSILON) {
+				vec3f refractedDirection = n_r * incidentDirection + (n_r * c - sqrt(1 - pow(n_r, 2) * (1 - pow(c, 2)))) * i.N;
+				ray refractedRay(refractedPosition, refractedDirection);
+				vec3f refractedColor = traceRay(scene, refractedRay, thresh, depth - 1, m.index);
+				incidentColor += prod(m.kt, refractedColor);
+			}
+		}
+
+		return incidentColor.clamp();
+		
+		//return m.shade(scene, r, i);
 	
 	} else {
 		// No intersection.  This ray travels to infinity, so we color
@@ -183,4 +192,35 @@ void RayTracer::tracePixel( int i, int j )
 	pixel[0] = (int)( 255.0 * col[0]);
 	pixel[1] = (int)( 255.0 * col[1]);
 	pixel[2] = (int)( 255.0 * col[2]);
+}
+
+void RayTracer::setDepth(int i)
+{
+	m_nDepth = i;
+}
+
+void RayTracer::setAntialiasing(int i)
+{
+	m_nAntialiasing = i;
+}
+
+void RayTracer::setAmbientLightRed(double d)
+{
+	this->scene->setAmbientLightRed(d);
+}
+void RayTracer::setAmbientLightGreen(double d)
+{
+	this->scene->setAmbientLightGreen(d);
+}
+void RayTracer::setAmbientLightBlue(double d)
+{
+	this->scene->setAmbientLightBlue(d);
+}
+void RayTracer::setJitter(int i)
+{
+	m_nJitter = i;
+}
+void RayTracer::setAdaptiveThreshold(double d)
+{
+	m_nAdaptiveThreshold = d;
 }

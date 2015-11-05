@@ -94,15 +94,27 @@ void TraceUI::cb_depthSlides(Fl_Widget* o, void* v)
 
 void TraceUI::cb_ambientLightRedSlides(Fl_Widget* o, void* v)
 {
-	((TraceUI*)(o->user_data()))->m_dAmbientLightRed = double(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_nAmbientLightRed = double(((Fl_Slider *)o)->value());
 }
 void TraceUI::cb_ambientLightGreenSlides(Fl_Widget* o, void* v)
 {
-	((TraceUI*)(o->user_data()))->m_dAmbientLightGreen = double(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_nAmbientLightGreen = double(((Fl_Slider *)o)->value());
 }
 void TraceUI::cb_ambientLightBlueSlides(Fl_Widget* o, void* v)
 {
-	((TraceUI*)(o->user_data()))->m_dAmbientLightBlue = double(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_nAmbientLightBlue = double(((Fl_Slider *)o)->value());
+}
+void TraceUI::cb_antialiasingSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nAntialiasing = int(((Fl_Slider *)o)->value());
+}
+void TraceUI::cb_adaptiveThresholdSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nAdaptiveThreshold = double(((Fl_Slider *)o)->value());
+}
+void TraceUI::cb_jitterSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nJitter = int(((Fl_Slider *)o)->value());
 }
 
 void TraceUI::cb_render(Fl_Widget* o, void* v)
@@ -155,6 +167,13 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 					}
 				}
 
+				pUI->raytracer->setDepth(pUI->getDepth());
+				pUI->raytracer->setAmbientLightRed(pUI->getAmbientLightRed());
+				pUI->raytracer->setAmbientLightGreen(pUI->getAmbientLightGreen());
+				pUI->raytracer->setAmbientLightBlue(pUI->getAmbientLightBlue());
+				pUI->raytracer->setAntialiasing(pUI->getAntialiasing());
+				pUI->raytracer->setJitter(pUI->getJitter());
+				pUI->raytracer->setAdaptiveThreshold(pUI->getAdaptiveThreshold());
 				pUI->raytracer->tracePixel( x, y );
 		
 			}
@@ -208,6 +227,37 @@ int TraceUI::getDepth()
 	return m_nDepth;
 }
 
+double TraceUI::getAmbientLightRed()
+{
+	return m_nAmbientLightRed;
+}
+
+double TraceUI::getAmbientLightBlue()
+{
+	return m_nAmbientLightBlue;
+}
+
+double TraceUI::getAmbientLightGreen()
+{
+	return m_nAmbientLightGreen;
+}
+
+int TraceUI::getAntialiasing()
+{
+	return m_nAntialiasing;
+}
+
+double TraceUI::getAdaptiveThreshold()
+{
+	return m_nAdaptiveThreshold;
+}
+
+int TraceUI::getJitter()
+{
+	return m_nJitter;
+}
+
+
 // menu definition
 Fl_Menu_Item TraceUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
@@ -227,10 +277,13 @@ TraceUI::TraceUI() {
 	// init.
 	m_nDepth = 0;
 	m_nSize = 150;
-	m_dAmbientLightRed = 0.1;
-	m_dAmbientLightGreen = 0.1;
-	m_dAmbientLightBlue = 0.1;
-	m_mainWindow = new Fl_Window(100, 40, 320, 200, "Ray <Not Loaded>");
+	m_nAmbientLightRed = 0.1;
+	m_nAmbientLightGreen = 0.1;
+	m_nAmbientLightBlue = 0.1;
+	m_nAntialiasing = 1;
+	m_nJitter = 0;
+	m_nAdaptiveThreshold = 0;
+	m_mainWindow = new Fl_Window(100, 40, 320, 500, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar
 		m_menubar = new Fl_Menu_Bar(0, 0, 320, 25);
@@ -253,8 +306,8 @@ TraceUI::TraceUI() {
 		m_sizeSlider = new Fl_Value_Slider(10, 55, 180, 20, "Size");
 		m_sizeSlider->user_data((void*)(this));	// record self to be used by static callback functions
 		m_sizeSlider->type(FL_HOR_NICE_SLIDER);
-		m_sizeSlider->labelfont(FL_COURIER);
-		m_sizeSlider->labelsize(12);
+        m_sizeSlider->labelfont(FL_COURIER);
+        m_sizeSlider->labelsize(12);
 		m_sizeSlider->minimum(64);
 		m_sizeSlider->maximum(512);
 		m_sizeSlider->step(1);
@@ -270,7 +323,7 @@ TraceUI::TraceUI() {
 		m_ambientLightRedSlider->minimum(0);
 		m_ambientLightRedSlider->maximum(1);
 		m_ambientLightRedSlider->step(0.01);
-		m_ambientLightRedSlider->value(m_dAmbientLightRed);
+		m_ambientLightRedSlider->value(m_nAmbientLightRed);
 		m_ambientLightRedSlider->align(FL_ALIGN_RIGHT);
 		m_ambientLightRedSlider->callback(cb_ambientLightRedSlides);
 
@@ -282,7 +335,7 @@ TraceUI::TraceUI() {
 		m_ambientLightGreenSlider->minimum(0);
 		m_ambientLightGreenSlider->maximum(1);
 		m_ambientLightGreenSlider->step(0.01);
-		m_ambientLightGreenSlider->value(m_dAmbientLightGreen);
+		m_ambientLightGreenSlider->value(m_nAmbientLightGreen);
 		m_ambientLightGreenSlider->align(FL_ALIGN_RIGHT);
 		m_ambientLightGreenSlider->callback(cb_ambientLightGreenSlides);
 
@@ -294,9 +347,45 @@ TraceUI::TraceUI() {
 		m_ambientLightBlueSlider->minimum(0);
 		m_ambientLightBlueSlider->maximum(1);
 		m_ambientLightBlueSlider->step(0.01);
-		m_ambientLightBlueSlider->value(m_dAmbientLightBlue);
+		m_ambientLightBlueSlider->value(m_nAmbientLightBlue);
 		m_ambientLightBlueSlider->align(FL_ALIGN_RIGHT);
 		m_ambientLightBlueSlider->callback(cb_ambientLightBlueSlides);
+
+		m_antialiasingSlider = new Fl_Value_Slider(10, 155, 180, 20, "Antialising");
+		m_antialiasingSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_antialiasingSlider->type(FL_HOR_NICE_SLIDER);
+		m_antialiasingSlider->labelfont(FL_COURIER);
+		m_antialiasingSlider->labelsize(12);
+		m_antialiasingSlider->minimum(1);
+		m_antialiasingSlider->maximum(5);
+		m_antialiasingSlider->step(1);
+		m_antialiasingSlider->value(m_nAntialiasing);
+		m_antialiasingSlider->align(FL_ALIGN_RIGHT);
+		m_antialiasingSlider->callback(cb_antialiasingSlides);
+
+		m_adaptiveThresholdSlider = new Fl_Value_Slider(10, 180, 180, 20, "Adaptive Termination");
+		m_adaptiveThresholdSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_adaptiveThresholdSlider->type(FL_HOR_NICE_SLIDER);
+		m_adaptiveThresholdSlider->labelfont(FL_COURIER);
+		m_adaptiveThresholdSlider->labelsize(12);
+		m_adaptiveThresholdSlider->minimum(0);
+		m_adaptiveThresholdSlider->maximum(1);
+		m_adaptiveThresholdSlider->step(0.05);
+		m_adaptiveThresholdSlider->value(m_nAdaptiveThreshold);
+		m_adaptiveThresholdSlider->align(FL_ALIGN_RIGHT);
+		m_adaptiveThresholdSlider->callback(cb_adaptiveThresholdSlides);
+
+		m_jitterSlider = new Fl_Value_Slider(10, 205, 180, 20, "Jittering");
+		m_jitterSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_jitterSlider->type(FL_HOR_NICE_SLIDER);
+		m_jitterSlider->labelfont(FL_COURIER);
+		m_jitterSlider->labelsize(12);
+		m_jitterSlider->minimum(0);
+		m_jitterSlider->maximum(1);
+		m_jitterSlider->step(1);
+		m_jitterSlider->value(m_nJitter);
+		m_jitterSlider->align(FL_ALIGN_RIGHT);
+		m_jitterSlider->callback(cb_jitterSlides);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));

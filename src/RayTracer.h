@@ -25,12 +25,25 @@ public:
 	bool loadScene( char* fn );
 
 	bool sceneLoaded();
+	void setAmbientLightRed(double d);
+	void setAmbientLightGreen(double d);
+	void setAmbientLightBlue(double d);
+
+	void setDepth(int i);
+	void setAntialiasing(int i);
+	void			setAdaptiveThreshold(double d);
+	void		setJitter(int i);
 
 private:
 	unsigned char *buffer;
 	int buffer_width, buffer_height;
 	int bufferSize;
 	Scene *scene;
+
+	int m_nDepth;
+	int m_nAntialiasing;
+	int         m_nJitter;
+	double      m_nAdaptiveThreshold;
 
 	bool m_bSceneLoaded;
 };

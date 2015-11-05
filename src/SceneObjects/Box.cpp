@@ -5,14 +5,18 @@
 
 bool Box::intersectLocal( const ray& r, isect& i ) const
 {
+	// YOUR CODE HERE:
+    // Add box intersection code here.
+	// it currently ignores all boxes and just returns false.
+
 	vec3f p = r.getPosition();
 	vec3f d = r.getDirection();
 	vec3f pos;
 	double t[6];	//up,down,left,right,front,back
-	
+
 	// initialization
 	for (int i = 0; i < 6; i++){
-		t[i] = -1;	
+		t[i] = -1;
 	}
 
 	int isInside;
@@ -27,7 +31,7 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 	}
 
 	// up
-	if ( abs(d[1]) > RAY_EPSILON)
+	if (abs(d[1]) > RAY_EPSILON)
 	{
 		t[0] = (0.5 - p[1]) / d[1];
 		pos = r.at(t[0]);
@@ -37,7 +41,7 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 		}
 	}
 	// down
-	if ( abs(d[1]) > RAY_EPSILON)
+	if (abs(d[1]) > RAY_EPSILON)
 	{
 		t[1] = (-0.5 - p[1]) / d[1];
 		pos = r.at(t[1]);
@@ -89,7 +93,7 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 
 	int closest = -1;
 
-	for ( int i = 0; i<6; i++)
+	for (int i = 0; i<6; i++)
 	{
 		if (t[i] > RAY_EPSILON)
 		{
@@ -108,7 +112,7 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 		return false;
 
 	i.obj = this;
-	i.t = t[ closest];
+	i.t = t[closest];
 	switch (closest){
 	case 0:
 		i.N = vec3f(0.0, 1.0 * isInside, 0.0);
@@ -132,8 +136,5 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 
 
 	return true;
-	
-	// YOUR CODE HERE:
-    // Add box intersection code here.
-	// it currently ignores all boxes and just returns false.
+	//return false;
 }

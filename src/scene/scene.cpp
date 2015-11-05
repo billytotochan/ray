@@ -200,12 +200,25 @@ void Scene::initScene()
 	}
 }
 
-void Scene::addAmbientLight(vec3f& color)
+void Scene::setAmbientLight(vec3f& v)
 {
-	ambientLight = color;
+	ambientLight = v;
 }
 
 vec3f Scene::getAmbientLight() const
 {
 	return ambientLight;
+}
+
+void Scene::setAmbientLightRed(double d)
+{
+	ambientLight[0] = d;
+}
+void Scene::setAmbientLightGreen(double d)
+{
+	ambientLight[1] = d;
+}
+void Scene::setAmbientLightBlue(double d)
+{
+	ambientLight[2] = d;
 }

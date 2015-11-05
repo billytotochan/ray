@@ -28,10 +28,12 @@ public:
 
 	Fl_Slider*			m_sizeSlider;
 	Fl_Slider*			m_depthSlider;
-
 	Fl_Slider*			m_ambientLightRedSlider;
 	Fl_Slider*			m_ambientLightGreenSlider;
 	Fl_Slider*			m_ambientLightBlueSlider;
+	Fl_Slider*			m_antialiasingSlider;
+	Fl_Slider*			m_adaptiveThresholdSlider;
+	Fl_Slider*			m_jitterSlider;
 
 	Fl_Button*			m_renderButton;
 	Fl_Button*			m_stopButton;
@@ -45,17 +47,24 @@ public:
 
 	int			getSize();
 	int			getDepth();
-	
-	double	getAmbientLightRed();
-	double	getAmbientLightGreen();
-	double	getAmbientLightBlue();
+	double			getAmbientLightRed();
+	double			getAmbientLightGreen();
+	double			getAmbientLightBlue();
+	int		getAntialiasing();
+	double			getAdaptiveThreshold();
+	int		getJitter();
 
 private:
 	RayTracer*	raytracer;
 
 	int			m_nSize;
 	int			m_nDepth;
-	double	m_dAmbientLightRed, m_dAmbientLightGreen, m_dAmbientLightBlue;
+	double			m_nAmbientLightRed;
+	double			m_nAmbientLightGreen;
+	double			m_nAmbientLightBlue;
+	int		m_nAntialiasing;
+	int         m_nJitter;
+	double      m_nAdaptiveThreshold;
 
 // static class members
 	static Fl_Menu_Item menuitems[];
@@ -74,6 +83,9 @@ private:
 	static void cb_ambientLightRedSlides(Fl_Widget* o, void* v);
 	static void cb_ambientLightGreenSlides(Fl_Widget* o, void* v);
 	static void cb_ambientLightBlueSlides(Fl_Widget* o, void* v);
+	static void cb_antialiasingSlides(Fl_Widget* o, void* v);
+	static void cb_adaptiveThresholdSlides(Fl_Widget* o, void* v);
+	static void cb_jitterSlides(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);

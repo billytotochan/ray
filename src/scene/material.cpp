@@ -19,12 +19,8 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
     // somewhere in your code in order to compute shadows and light falloff.
 	vec3f color = vec3f( 0.0, 0.0, 0.0);
 	color += ke;
+	color += prod(ka, scene->getAmbientLight());
 	
-	vec3f ambientColor = scene->getAmbientLight();
-	color[0] += ka[0] * ambientColor[0];
-	color[1] += ka[1] * ambientColor[1];
-	color[2] += ka[2] * ambientColor[2];
-
 	vec3f point = r.at(i.t);
 	vec3f zeroVector = vec3f(0.0,0.0,0.0);
 
@@ -41,10 +37,7 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 
 		//printf("%f", diffuseIndex[0]);
 
-		for (int i = 0; i < 3; i++){
-			color[i] += lightColor[i] * ( diffuseIndex[i] + specularIndex[i]);
-			if (color[i] > 1) color[i] = 1;
-		}
+		color = prod(lightColor, diffuseIndex[i] + specularIndex[i]);
 	}
 
 	//printf("%f ", color[0]);
