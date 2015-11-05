@@ -183,3 +183,16 @@ void RayTracer::tracePixel( int i, int j )
 	pixel[1] = (int)( 255.0 * col[1]);
 	pixel[2] = (int)( 255.0 * col[2]);
 }
+
+void RayTracer::setAmbientLightRed(double d)
+{
+	this->scene->setAmbientLightRed(d);
+}
+void RayTracer::setAmbientLightGreen(double d)
+{
+	this->scene->setAmbientLightGreen(d);
+}
+void RayTracer::setAmbientLightBlue(double d)
+{
+	this->scene->setAmbientLightBlue(d);
+}

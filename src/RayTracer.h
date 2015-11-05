@@ -25,6 +25,9 @@ public:
 	bool loadScene( char* fn );
 
 	bool sceneLoaded();
+	void setAmbientLightRed(double d);
+	void setAmbientLightGreen(double d);
+	void setAmbientLightBlue(double d);
 
 private:
 	unsigned char *buffer;

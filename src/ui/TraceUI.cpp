@@ -155,6 +155,9 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 					}
 				}
 
+				pUI->raytracer->setAmbientLightRed(pUI->getAmbientLightRed());
+				pUI->raytracer->setAmbientLightGreen(pUI->getAmbientLightGreen());
+				pUI->raytracer->setAmbientLightBlue(pUI->getAmbientLightBlue());
 				pUI->raytracer->tracePixel( x, y );
 		
 			}
