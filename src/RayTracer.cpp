@@ -17,13 +17,13 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 {
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
-	return traceRay( scene, r, vec3f(1.0,1.0,1.0), 0 ).clamp();
+	return traceRay( scene, r, vec3f(1.0,1.0,1.0), 0, 1.0 ).clamp();
 }
 
 // Do recursive ray tracing!  You'll want to insert a lot of code here
 // (or places called from here) to handle reflection, refraction, etc etc.
 vec3f RayTracer::traceRay( Scene *scene, const ray& r, 
-	const vec3f& thresh, int depth )
+	const vec3f& thresh, int depth, double prev_index)
 {
 	isect i;
 
@@ -40,6 +40,28 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		// rays.
 
 		const Material& m = i.getMaterial();
+		/*vec3f incidentColor = m.shade(scene, r, i);
+		vec3f incidentDirection = r.getDirection().normalize();
+		vec3f reflectedPosition = r.at(i.t) + RAY_EPSILON * i.N.normalize();
+		vec3f reflectedDirection = (incidentDirection + 2 * (-incidentDirection.dot(i.N.normalize()) * i.N.normalize())).normalize();
+		ray reflectednRay(reflectedPosition, reflectedDirection);
+		vec3f reflected_kd = traceRay(scene, reflectednRay, thresh, depth - 1, m.index);
+		incidentColor = prod(m.kr, reflected_kd);
+
+		double n_i = (m.index == prev_index ? m.index : 1.0);
+		double n_t = (m.index == prev_index ? 1.0 : m.index);
+		double n_r = n_i / n_t;
+		double c = -i.N.dot(incidentDirection) / (incidentDirection.length() * i.N.length());
+		vec3f refractedPosition = r.at(i.t) - RAY_EPSILON * i.N.normalize();
+
+		if (1 - pow(n_r, 2) * (1 - pow(c, 2)) > RAY_EPSILON) {
+			vec3f refractedDirection = n_r * incidentDirection + (n_r * c - sqrt(1 - pow(n_r, 2) * (1 - pow(c, 2)))) * i.N;
+			ray refractedRay(refractedPosition, refractedDirection);
+			vec3f refractedColor = traceRay(scene, refractedRay, thresh, depth - 1, m.index);
+			incidentColor = prod(m.kt, refractedColor);
+		}
+
+		return incidentColor.clamp();*/
 		return m.shade(scene, r, i);
 	
 	} else {

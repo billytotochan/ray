@@ -92,6 +92,19 @@ void TraceUI::cb_depthSlides(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_nDepth=int( ((Fl_Slider *)o)->value() ) ;
 }
 
+void TraceUI::cb_ambientLightRedSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nAmbientLightRed = double(((Fl_Slider *)o)->value());
+}
+void TraceUI::cb_ambientLightGreenSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nAmbientLightGreen = double(((Fl_Slider *)o)->value());
+}
+void TraceUI::cb_ambientLightBlueSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nAmbientLightBlue = double(((Fl_Slider *)o)->value());
+}
+
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
 	char buffer[256];
@@ -195,6 +208,22 @@ int TraceUI::getDepth()
 	return m_nDepth;
 }
 
+double TraceUI::getAmbientLightRed()
+{
+	return m_nAmbientLightRed;
+}
+
+double TraceUI::getAmbientLightBlue()
+{
+	return m_nAmbientLightBlue;
+}
+
+double TraceUI::getAmbientLightGreen()
+{
+	return m_nAmbientLightGreen;
+}
+
+
 // menu definition
 Fl_Menu_Item TraceUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
@@ -214,9 +243,9 @@ TraceUI::TraceUI() {
 	// init.
 	m_nDepth = 0;
 	m_nSize = 150;
-	m_dAmbientLightRed = 0.1;
-	m_dAmbientLightGreen = 0.1;
-	m_dAmbientLightBlue = 0.1;
+	m_nAmbientLightRed = 0.1;
+	m_nAmbientLightGreen = 0.1;
+	m_nAmbientLightBlue = 0.1;
 	m_mainWindow = new Fl_Window(100, 40, 320, 200, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar
@@ -249,8 +278,6 @@ TraceUI::TraceUI() {
 		m_sizeSlider->align(FL_ALIGN_RIGHT);
 		m_sizeSlider->callback(cb_sizeSlides);
 
-<<<<<<< HEAD
-=======
 		m_ambientLightRedSlider = new Fl_Value_Slider(10, 80, 180, 20, "Ambient Red");
 		m_ambientLightRedSlider->user_data((void*)(this));	// record self to be used by static callback functions
 		m_ambientLightRedSlider->type(FL_HOR_NICE_SLIDER);
@@ -259,7 +286,7 @@ TraceUI::TraceUI() {
 		m_ambientLightRedSlider->minimum(0);
 		m_ambientLightRedSlider->maximum(1);
 		m_ambientLightRedSlider->step(0.01);
-		m_ambientLightRedSlider->value(m_dAmbientLightRed);
+		m_ambientLightRedSlider->value(m_nAmbientLightRed);
 		m_ambientLightRedSlider->align(FL_ALIGN_RIGHT);
 		m_ambientLightRedSlider->callback(cb_ambientLightRedSlides);
 
@@ -271,7 +298,7 @@ TraceUI::TraceUI() {
 		m_ambientLightGreenSlider->minimum(0);
 		m_ambientLightGreenSlider->maximum(1);
 		m_ambientLightGreenSlider->step(0.01);
-		m_ambientLightGreenSlider->value(m_dAmbientLightGreen);
+		m_ambientLightGreenSlider->value(m_nAmbientLightGreen);
 		m_ambientLightGreenSlider->align(FL_ALIGN_RIGHT);
 		m_ambientLightGreenSlider->callback(cb_ambientLightGreenSlides);
 
@@ -283,11 +310,10 @@ TraceUI::TraceUI() {
 		m_ambientLightBlueSlider->minimum(0);
 		m_ambientLightBlueSlider->maximum(1);
 		m_ambientLightBlueSlider->step(0.01);
-		m_ambientLightBlueSlider->value(m_dAmbientLightBlue);
+		m_ambientLightBlueSlider->value(m_nAmbientLightBlue);
 		m_ambientLightBlueSlider->align(FL_ALIGN_RIGHT);
 		m_ambientLightBlueSlider->callback(cb_ambientLightBlueSlides);
 
->>>>>>> a8d0fe3e2956d5815bd31b63ca0cf58b4367a630
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));
 		m_renderButton->callback(cb_render);

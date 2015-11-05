@@ -306,8 +306,11 @@ static void processGeometry( string name, Obj *child, Scene *scene,
 			obj = new Sphere( scene, mat );
 		} else if( name == "box" ) {
 			obj = new Box( scene, mat );
-		} else if( name == "cylinder" ) {
-			obj = new Cylinder( scene, mat );
+		}
+		else if (name == "cylinder") {
+			bool capped;
+			maybeExtractField(child, "capped", capped);
+			obj = new Cylinder(scene, mat, capped);
 		} else if( name == "cone" ) {
 			double height = 1.0;
 			double bottom_radius = 1.0;
@@ -528,10 +531,18 @@ static void processObject( Obj *obj, Scene *scene, mmap& materials )
 		if( child == NULL ) {
 			throw ParseError( "No info for point_light" );
 		}
-
+		double constant_attenuation_coeff = 0.0;
+		double linear_attenuation_coeff = 0.0;
+		double quardratic_attenuation_coeff = 0.0;
+		maybeExtractField(child, "constant_attenuation_coeff", constant_attenuation_coeff);
+		maybeExtractField(child, "linear_attenuation_coeff", linear_attenuation_coeff);
+		maybeExtractField(child, "quardratic_attenuation_coeff", quardratic_attenuation_coeff);
 		scene->add( new PointLight( scene, 
 			tupleToVec( getField( child, "position" ) ),
-			tupleToVec( getColorField( child ) ) ) );
+			tupleToVec(getColorField(child))));
+	}
+	else if (name == "ambient_light") {
+		scene->setAmbientLight(tupleToVec(getColorField(child)));
 	} else if( 	name == "sphere" ||
 				name == "box" ||
 				name == "cylinder" ||

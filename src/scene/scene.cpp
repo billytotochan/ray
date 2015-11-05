@@ -199,3 +199,26 @@ void Scene::initScene()
 			nonboundedobjects.push_back(*j);
 	}
 }
+
+void Scene::setAmbientLight(vec3f& v)
+{
+	ambientLight = v;
+}
+
+vec3f Scene::getAmbientLight() const
+{
+	return ambientLight;
+}
+
+void Scene::setAmbientLightRed(double d)
+{
+	ambientLight[0] = d;
+}
+void Scene::setAmbientLightGreen(double d)
+{
+	ambientLight[0] = 1;
+}
+void Scene::setAmbientLightBlue(double d)
+{
+	ambientLight[0] = 2;
+}
