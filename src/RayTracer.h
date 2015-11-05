@@ -30,6 +30,7 @@ public:
 	void setAmbientLightBlue(double d);
 
 	void setDepth(int i);
+	void setAntialiasing(int i);
 
 private:
 	unsigned char *buffer;
@@ -38,6 +39,7 @@ private:
 	Scene *scene;
 
 	int m_nDepth;
+	int m_nAntialiasing;
 
 	bool m_bSceneLoaded;
 };

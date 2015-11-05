@@ -44,7 +44,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		if (depth <= 0) {
 			return incidentColor;
 		}
-		/*
+		
 		vec3f incidentDirection = r.getDirection().normalize();
 		vec3f reflectedPosition = r.at(i.t) + RAY_EPSILON * i.N.normalize();
 		vec3f reflectedDirection = (incidentDirection + 2 * (-incidentDirection.dot(i.N.normalize()) * i.N.normalize())).normalize();
@@ -66,8 +66,8 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		}
 
 		return incidentColor.clamp();
-		*/
-		return m.shade(scene, r, i);
+		
+		//return m.shade(scene, r, i);
 	
 	} else {
 		// No intersection.  This ray travels to infinity, so we color
@@ -192,6 +192,11 @@ void RayTracer::tracePixel( int i, int j )
 void RayTracer::setDepth(int i)
 {
 	m_nDepth = i;
+}
+
+void RayTracer::setAntialiasing(int i)
+{
+	m_nAntialiasing = i;
 }
 
 void RayTracer::setAmbientLightRed(double d)

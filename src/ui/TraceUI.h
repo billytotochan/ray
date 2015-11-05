@@ -30,7 +30,8 @@ public:
 	Fl_Slider*			m_depthSlider;
 	Fl_Slider*			m_ambientLightRedSlider;
 	Fl_Slider*			m_ambientLightGreenSlider;
-	Fl_Slider*			m_ambientLightBlueSlider; 
+	Fl_Slider*			m_ambientLightBlueSlider;
+	Fl_Slider*			m_antialiasingSlider;
 
 	Fl_Button*			m_renderButton;
 	Fl_Button*			m_stopButton;
@@ -47,6 +48,7 @@ public:
 	double			getAmbientLightRed();
 	double			getAmbientLightGreen();
 	double			getAmbientLightBlue();
+	int		getAntialiasing();
 
 private:
 	RayTracer*	raytracer;
@@ -56,6 +58,7 @@ private:
 	double			m_nAmbientLightRed;
 	double			m_nAmbientLightGreen;
 	double			m_nAmbientLightBlue;
+	int		m_nAntialiasing;
 
 // static class members
 	static Fl_Menu_Item menuitems[];
@@ -74,6 +77,7 @@ private:
 	static void cb_ambientLightRedSlides(Fl_Widget* o, void* v);
 	static void cb_ambientLightGreenSlides(Fl_Widget* o, void* v);
 	static void cb_ambientLightBlueSlides(Fl_Widget* o, void* v);
+	static void cb_antialiasingSlides(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);

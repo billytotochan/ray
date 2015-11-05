@@ -104,6 +104,10 @@ void TraceUI::cb_ambientLightBlueSlides(Fl_Widget* o, void* v)
 {
 	((TraceUI*)(o->user_data()))->m_nAmbientLightBlue = double(((Fl_Slider *)o)->value());
 }
+void TraceUI::cb_antialiasingSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nAntialiasing = int(((Fl_Slider *)o)->value());
+}
 
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
@@ -159,6 +163,7 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 				pUI->raytracer->setAmbientLightRed(pUI->getAmbientLightRed());
 				pUI->raytracer->setAmbientLightGreen(pUI->getAmbientLightGreen());
 				pUI->raytracer->setAmbientLightBlue(pUI->getAmbientLightBlue());
+				pUI->raytracer->setAntialiasing(pUI->getAntialiasing());
 				pUI->raytracer->tracePixel( x, y );
 		
 			}
@@ -227,6 +232,11 @@ double TraceUI::getAmbientLightGreen()
 	return m_nAmbientLightGreen;
 }
 
+int TraceUI::getAntialiasing()
+{
+	return m_nAntialiasing;
+}
+
 
 // menu definition
 Fl_Menu_Item TraceUI::menuitems[] = {
@@ -250,6 +260,7 @@ TraceUI::TraceUI() {
 	m_nAmbientLightRed = 0.1;
 	m_nAmbientLightGreen = 0.1;
 	m_nAmbientLightBlue = 0.1;
+	m_nAntialiasing = 1;
 	m_mainWindow = new Fl_Window(100, 40, 320, 200, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar
@@ -317,6 +328,18 @@ TraceUI::TraceUI() {
 		m_ambientLightBlueSlider->value(m_nAmbientLightBlue);
 		m_ambientLightBlueSlider->align(FL_ALIGN_RIGHT);
 		m_ambientLightBlueSlider->callback(cb_ambientLightBlueSlides);
+
+		m_antialiasingSlider = new Fl_Value_Slider(10, 155, 180, 20, "Antialising");
+		m_antialiasingSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_antialiasingSlider->type(FL_HOR_NICE_SLIDER);
+		m_antialiasingSlider->labelfont(FL_COURIER);
+		m_antialiasingSlider->labelsize(12);
+		m_antialiasingSlider->minimum(1);
+		m_antialiasingSlider->maximum(5);
+		m_antialiasingSlider->step(1);
+		m_antialiasingSlider->value(m_nAntialiasing);
+		m_antialiasingSlider->align(FL_ALIGN_RIGHT);
+		m_antialiasingSlider->callback(cb_antialiasingSlides);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));
