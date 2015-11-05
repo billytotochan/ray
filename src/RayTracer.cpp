@@ -41,28 +41,33 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 
 		const Material& m = i.getMaterial();
 		vec3f incidentColor = m.shade(scene, r, i);
-		if (depth <= 0) {
+		if (depth < m_nDepth) {
 			return incidentColor;
 		}
 		
 		vec3f incidentDirection = r.getDirection().normalize();
-		vec3f reflectedPosition = r.at(i.t) + RAY_EPSILON * i.N.normalize();
-		vec3f reflectedDirection = (incidentDirection + 2 * (-incidentDirection.dot(i.N.normalize()) * i.N.normalize())).normalize();
-		ray reflectednRay(reflectedPosition, reflectedDirection);
-		vec3f reflected_kd = traceRay(scene, reflectednRay, thresh, depth - 1, m.index);
-		incidentColor = prod(m.kr, reflected_kd);
+		
+		if (!m.kr.iszero()) {
+			vec3f reflectedPosition = r.at(i.t) + RAY_EPSILON * i.N.normalize();
+			vec3f reflectedDirection = (incidentDirection + 2 * (-incidentDirection.dot(i.N.normalize()) * i.N.normalize())).normalize();
+			ray reflectednRay(reflectedPosition, reflectedDirection);
+			vec3f reflectedColor = traceRay(scene, reflectednRay, thresh, depth - 1, m.index);
+			incidentColor += prod(m.kr, reflectedColor);
+		}
 
-		double n_i = (m.index == prev_index ? m.index : 1.0);
-		double n_t = (m.index == prev_index ? 1.0 : m.index);
-		double n_r = n_i / n_t;
-		double c = -i.N.dot(incidentDirection) / (incidentDirection.length() * i.N.length());
-		vec3f refractedPosition = r.at(i.t) - RAY_EPSILON * i.N.normalize();
+		if (!m.kt.iszero()) {
+			double n_i = (m.index == prev_index ? m.index : 1.0);
+			double n_t = (m.index == prev_index ? 1.0 : m.index);
+			double n_r = n_i / n_t;
+			double c = -i.N.dot(incidentDirection) / (incidentDirection.length() * i.N.length());
+			vec3f refractedPosition = r.at(i.t) - RAY_EPSILON * i.N.normalize();
 
-		if (1 - pow(n_r, 2) * (1 - pow(c, 2)) > RAY_EPSILON) {
-			vec3f refractedDirection = n_r * incidentDirection + (n_r * c - sqrt(1 - pow(n_r, 2) * (1 - pow(c, 2)))) * i.N;
-			ray refractedRay(refractedPosition, refractedDirection);
-			vec3f refractedColor = traceRay(scene, refractedRay, thresh, depth - 1, m.index);
-			incidentColor = prod(m.kt, refractedColor);
+			if (1 - pow(n_r, 2) * (1 - pow(c, 2)) > RAY_EPSILON) {
+				vec3f refractedDirection = n_r * incidentDirection + (n_r * c - sqrt(1 - pow(n_r, 2) * (1 - pow(c, 2)))) * i.N;
+				ray refractedRay(refractedPosition, refractedDirection);
+				vec3f refractedColor = traceRay(scene, refractedRay, thresh, depth - 1, m.index);
+				incidentColor += prod(m.kt, refractedColor);
+			}
 		}
 
 		return incidentColor.clamp();

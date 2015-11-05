@@ -531,17 +531,25 @@ static void processObject( Obj *obj, Scene *scene, mmap& materials )
 		if( child == NULL ) {
 			throw ParseError( "No info for point_light" );
 		}
-		double constant_attenuation_coeff = 0.0;
-		double linear_attenuation_coeff = 0.0;
-		double quardratic_attenuation_coeff = 0.0;
-		maybeExtractField(child, "constant_attenuation_coeff", constant_attenuation_coeff);
-		maybeExtractField(child, "linear_attenuation_coeff", linear_attenuation_coeff);
-		maybeExtractField(child, "quardratic_attenuation_coeff", quardratic_attenuation_coeff);
-		scene->add( new PointLight( scene, 
-			tupleToVec( getField( child, "position" ) ),
-			tupleToVec(getColorField(child))));
+		PointLight* pointLight = new PointLight(scene,
+			tupleToVec(getField(child, "position")),
+			tupleToVec(getColorField(child)));
+		scene->add(pointLight);
+
+		if (hasField(child, "constant_attenuation_coeff") && 
+			hasField(child, "linear_attenuation_coeff")	&& 
+			hasField(child, "quadratic_attenuation_coeff"))
+		{
+			pointLight->setAttenuationCoefficients(
+				getField(child, "constant_attenuation_coeff")->getScalar(),
+				getField(child, "linear_attenuation_coeff")->getScalar(),
+				getField(child, "quadratic_attenuation_coeff")->getScalar());
+		}
 	}
 	else if (name == "ambient_light") {
+		if (child == NULL) {
+			throw ParseError("No info for ambient_light");
+		}
 		scene->setAmbientLight(tupleToVec(getColorField(child)));
 	} else if( 	name == "sphere" ||
 				name == "box" ||

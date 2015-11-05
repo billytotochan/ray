@@ -34,6 +34,11 @@ double PointLight::distanceAttenuation( const vec3f& P ) const
 	// You'll need to modify this method to attenuate the intensity 
 	// of the light based on the distance between the source and the 
 	// point P.  For now, I assume no attenuation and just return 1.0
+	/*double d2 = (P - position).length_squared();
+	double d = sqrt(d2);
+	double coeff = m_nConstantAttenuationCoefficient + m_nLinearAttenuationCoefficient * d + m_nQuadraticAttenuationCoefficient * d2;
+	return 1.0 / max<double>(coeff, 1.0);*/
+	
 	return 1.0;
 }
 
@@ -54,4 +59,13 @@ vec3f PointLight::shadowAttenuation(const vec3f& P) const
     // YOUR CODE HERE:
     // You should implement shadow-handling code here.
     return vec3f(1,1,1);
+}
+
+void PointLight::setAttenuationCoefficients(const double m_nConstantAttenuationCoeff,
+	const double m_nLinearAttenuationCoeff,
+	const double m_nQuadraticAttenuationCoeff)
+{
+	m_nConstantAttenuationCoefficient = m_nConstantAttenuationCoeff;
+	m_nLinearAttenuationCoefficient = m_nLinearAttenuationCoeff;
+	m_nQuadraticAttenuationCoefficient = m_nQuadraticAttenuationCoeff;
 }
