@@ -33,10 +33,10 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 
 		vec3f lightColor = (*it)->getColor(point);
 
-		vec3f diffuseIndex = kd * max( i.N.normalize().dot( -incidentLight), 0.0);
+		vec3f diffuseIndex = kd * max( i.N.normalize().dot( incidentLight), 0.0);
 		vec3f specularIndex = ks * pow( max( -r.getDirection().dot( reflectLight), 0.0) , shininess);
 
-		color += prod(prod(attenuation, lightColor), diffuseIndex + specularIndex);
+		color += prod( prod( lightColor, attenuation), diffuseIndex + specularIndex).clamp();
 	}
 
 	return color;
