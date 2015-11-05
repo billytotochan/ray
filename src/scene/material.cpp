@@ -19,7 +19,11 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
     // somewhere in your code in order to compute shadows and light falloff.
 	vec3f color = vec3f( 0.0, 0.0, 0.0);
 	color += ke;
-	color += ka;
+	
+	vec3f ambientColor = scene->getAmbientLight();
+	color[0] += ka[0] * ambientColor[0];
+	color[1] += ka[1] * ambientColor[1];
+	color[2] += ka[2] * ambientColor[2];
 
 	vec3f point = r.at(i.t);
 	vec3f zeroVector = vec3f(0.0,0.0,0.0);
@@ -27,16 +31,23 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 	list<Light*>::const_iterator it;
 	for (it = scene->beginLights(); it != scene->endLights(); it++){
 
-		vec3f incidentLight = ((*it)->getDirection( point)).normalize();
+		vec3f incidentLight = -((*it)->getDirection( point)).normalize();
+		vec3f reflectLight = (-incidentLight + 2 * incidentLight.dot(i.N) / i.N.length_squared() * i.N).normalize();
 
 		vec3f lightColor = (*it)->getColor(point);
 
-		vec3f diffuseIndex = kd * i.N.normalize().dot(incidentLight);
+		vec3f diffuseIndex = kd * max( i.N.normalize().dot( incidentLight), 0.0);
+		vec3f specularIndex = ks * pow( max( -r.getDirection().dot(reflectLight),0.0) , shininess);
+
+		//printf("%f", diffuseIndex[0]);
 
 		for (int i = 0; i < 3; i++){
-			color[i] = lightColor[i] * diffuseIndex[i];
+			color[i] += lightColor[i] * ( diffuseIndex[i] + specularIndex[i]);
+			if (color[i] > 1) color[i] = 1;
 		}
 	}
+
+	//printf("%f ", color[0]);
 
 	return color;
 }

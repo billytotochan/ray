@@ -41,6 +41,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 
 		const Material& m = i.getMaterial();
 		vec3f incident_kd = m.shade(scene, r, i);
+		/*
 		vec3f incidentDirection = r.getDirection().normalize();
 		vec3f reflectedPosition = r.at(i.t) + RAY_EPSILON * i.N.normalize();
 		vec3f reflectedDirection = (incidentDirection + 2 * (-incidentDirection.dot(i.N.normalize()) * i.N.normalize())).normalize();
@@ -60,6 +61,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			vec3f refracted_kd = traceRay(scene, refractedRay, thresh, depth - 1, m.index);
 			incident_kd = prod(m.kt, refracted_kd);
 		}
+		*/
 
 		return incident_kd.clamp();
 	
