@@ -35,12 +35,8 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 		vec3f diffuseIndex = kd * max( i.N.normalize().dot( incidentLight), 0.0);
 		vec3f specularIndex = ks * pow( max( -r.getDirection().dot(reflectLight),0.0) , shininess);
 
-		//printf("%f", diffuseIndex[0]);
-
-		color = prod(lightColor, diffuseIndex[i] + specularIndex[i]);
+		color = prod(lightColor, diffuseIndex + specularIndex);
 	}
-
-	//printf("%f ", color[0]);
 
 	return color;
 }
