@@ -13,7 +13,25 @@ vec3f DirectionalLight::shadowAttenuation( const vec3f& P ) const
 {
     // YOUR CODE HERE:
     // You should implement shadow-handling code here.
-    return vec3f(1,1,1);
+
+	vec3f direction = getDirection(P);
+	vec3f currentP = P;
+	isect isectP;
+	vec3f color = getColor(P);
+	ray r = ray(currentP, direction);
+	while (scene->intersect(r, isectP))
+	{
+		if (isectP.getMaterial().kt.iszero()) {
+			return vec3f(0, 0, 0);
+		}
+		currentP = r.at(isectP.t);
+		r = ray(currentP, direction);
+		color = prod(color, isectP.getMaterial().kt);
+	}
+
+	return color;
+
+    //return vec3f(1,1,1);
 }
 
 vec3f DirectionalLight::getColor( const vec3f& P ) const
@@ -57,7 +75,29 @@ vec3f PointLight::shadowAttenuation(const vec3f& P) const
 {
     // YOUR CODE HERE:
     // You should implement shadow-handling code here.
-    return vec3f(1,1,1);
+
+	vec3f direction = getDirection(P);
+	double distance = (position - P).length();
+	vec3f currentP = P;
+	isect isectP;
+	vec3f color = getColor(P);
+	ray r = ray(currentP, direction);
+	while (scene->intersect(r, isectP))
+	{
+		if ((distance -= isectP.t) < RAY_EPSILON) {
+			return color;
+		}
+		if (isectP.getMaterial().kt.iszero()) {
+			return vec3f(0, 0, 0);
+		}
+		currentP = r.at(isectP.t);
+		r = ray(currentP, direction);
+		color = prod(color, isectP.getMaterial().kt);
+	}
+
+	return color;
+
+    //return vec3f(1,1,1);
 }
 
 void PointLight::setAttenuationCoefficients(const double m_nConstantAttenuationCoeff,
