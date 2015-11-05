@@ -23,11 +23,11 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 
 	if (p[0] >= -0.5&&p[0] <= 0.5&&p[1] >= -0.5&&p[1] <= 0.5&&p[2] >= -0.5&&p[2] <= 0.5)
 	{
-		isInside = 1; //inside
+		isInside = -1; //inside
 	}
 	else
 	{
-		isInside = -1; //outside
+		isInside = 1; //outside
 	}
 
 	// up
@@ -133,7 +133,6 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 		i.N = vec3f(0.0, 0.0, -1.0 * isInside);
 		break;
 	}
-
 
 	return true;
 	//return false;

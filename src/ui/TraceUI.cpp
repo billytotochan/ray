@@ -277,9 +277,9 @@ TraceUI::TraceUI() {
 	// init.
 	m_nDepth = 0;
 	m_nSize = 150;
-	m_nAmbientLightRed = 0.1;
-	m_nAmbientLightGreen = 0.1;
-	m_nAmbientLightBlue = 0.1;
+	m_nAmbientLightRed = 0.2;
+	m_nAmbientLightGreen = 0.2;
+	m_nAmbientLightBlue = 0.2;
 	m_nAntialiasing = 1;
 	m_nJitter = 0;
 	m_nAdaptiveThreshold = 0;

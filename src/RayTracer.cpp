@@ -42,7 +42,6 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		const Material& m = i.getMaterial();
 		vec3f incidentColor = m.shade(scene, r, i);
 		if (depth <= 0) {
-			printf("too deep \n");
 			return incidentColor;
 		}
 		
