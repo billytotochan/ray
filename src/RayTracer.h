@@ -29,11 +29,15 @@ public:
 	void setAmbientLightGreen(double d);
 	void setAmbientLightBlue(double d);
 
+	void setDepth(int i);
+
 private:
 	unsigned char *buffer;
 	int buffer_width, buffer_height;
 	int bufferSize;
 	Scene *scene;
+
+	int m_nDepth;
 
 	bool m_bSceneLoaded;
 };

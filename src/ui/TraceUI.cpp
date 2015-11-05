@@ -155,6 +155,7 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 					}
 				}
 
+				pUI->raytracer->setDepth(pUI->getDepth());
 				pUI->raytracer->setAmbientLightRed(pUI->getAmbientLightRed());
 				pUI->raytracer->setAmbientLightGreen(pUI->getAmbientLightGreen());
 				pUI->raytracer->setAmbientLightBlue(pUI->getAmbientLightBlue());
