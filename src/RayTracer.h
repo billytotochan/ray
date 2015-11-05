@@ -31,6 +31,8 @@ public:
 
 	void setDepth(int i);
 	void setAntialiasing(int i);
+	void			setAdaptiveThreshold(double d);
+	void		setJitter(int i);
 
 private:
 	unsigned char *buffer;
@@ -40,6 +42,8 @@ private:
 
 	int m_nDepth;
 	int m_nAntialiasing;
+	int         m_nJitter;
+	double      m_nAdaptiveThreshold;
 
 	bool m_bSceneLoaded;
 };
