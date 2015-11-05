@@ -216,9 +216,9 @@ void Scene::setAmbientLightRed(double d)
 }
 void Scene::setAmbientLightGreen(double d)
 {
-	ambientLight[0] = 1;
+	ambientLight[1] = d;
 }
 void Scene::setAmbientLightBlue(double d)
 {
-	ambientLight[0] = 2;
+	ambientLight[2] = d;
 }
