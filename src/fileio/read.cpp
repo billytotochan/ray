@@ -308,7 +308,7 @@ static void processGeometry( string name, Obj *child, Scene *scene,
 			obj = new Box( scene, mat );
 		}
 		else if (name == "cylinder") {
-			bool capped;
+			bool capped = true;
 			maybeExtractField(child, "capped", capped);
 			obj = new Cylinder(scene, mat, capped);
 		} else if( name == "cone" ) {
