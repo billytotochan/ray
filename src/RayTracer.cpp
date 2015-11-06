@@ -179,12 +179,21 @@ void RayTracer::traceLines( int start, int stop )
 void RayTracer::tracePixel( int i, int j )
 {
 	vec3f col;
+	vec3f a[25];
+	int iteration[7] = { 0, 0, 0, 0, 0, 0, 0 };
+	int deep;
 
 	if( !scene )
 		return;
 
 	double x = double(i)/double(buffer_width);
 	double y = double(j)/double(buffer_height);
+	double w = 1.0 / double(buffer_width);
+	double h = 1.0 / double(buffer_height);
+
+	//if (m_nSuper) {
+
+	
 
 	col = trace( scene,x,y );
 
@@ -236,4 +245,8 @@ void RayTracer::setLinearAttenuationCoefficient(double d)
 void RayTracer::setQuadraticAttenuationCoefficient(double d)
 {
 	m_nQuadraticAttenuationCoefficient = d;
+}
+void RayTracer::setSuperSampling(int i)
+{
+	m_nSuperSampling = i;
 }

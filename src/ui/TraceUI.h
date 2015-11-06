@@ -37,6 +37,7 @@ public:
 	Fl_Slider*			m_constantAttenuationCoeffSlider;
 	Fl_Slider*			m_linearAttenuationCoeffSlider;
 	Fl_Slider*			m_quadraticAttenuationCoeffSlider;
+	Fl_Slider*	m_superSamplingSlider;
 
 	Fl_Button*			m_renderButton;
 	Fl_Button*			m_stopButton;
@@ -59,6 +60,7 @@ public:
 	double		getConstantAttenuationCoefficient();
 	double		getLinearAttenuationCoefficient();
 	double		getQuadraticAttenuationCoefficient();
+	int getSuperSampling();
 
 private:
 	RayTracer*	raytracer;
@@ -74,6 +76,7 @@ private:
 	double      m_nConstantAttenuationCoefficient;
 	double      m_nLinearAttenuationCoefficient;
 	double      m_nQuadraticAttenuationCoefficient;
+	int m_nSuperSampling;
 	
 // static class members
 	static Fl_Menu_Item menuitems[];
@@ -98,6 +101,7 @@ private:
 	static void cb_constantAttenuationCoeffSlides(Fl_Widget* o, void* v);
 	static void cb_linearAttenuationCoeffSlides(Fl_Widget* o, void* v);
 	static void cb_quadraticAttenuationCoeffSlides(Fl_Widget* o, void* v);
+	static void cb_superSamplingSlides(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);

@@ -36,6 +36,7 @@ public:
 	void			setConstantAttenuationCoefficient(double d);
 	void			setLinearAttenuationCoefficient(double d);
 	void			setQuadraticAttenuationCoefficient(double d);
+	void setSuperSampling(int i);
 
 private:
 	unsigned char *buffer;
@@ -50,6 +51,7 @@ private:
 	double      m_nConstantAttenuationCoefficient;
 	double      m_nLinearAttenuationCoefficient;
 	double      m_nQuadraticAttenuationCoefficient;
+	int m_nSuperSampling;
 
 	bool m_bSceneLoaded;
 };

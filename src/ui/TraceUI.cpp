@@ -128,6 +128,10 @@ void TraceUI::cb_quadraticAttenuationCoeffSlides(Fl_Widget* o, void* v)
 {
 	((TraceUI*)(o->user_data()))->m_nQuadraticAttenuationCoefficient = double(((Fl_Slider *)o)->value());
 }
+void TraceUI::cb_superSamplingSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nSuperSampling = int(((Fl_Slider *)o)->value());
+}
 
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
@@ -189,6 +193,7 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 				pUI->raytracer->setConstantAttenuationCoefficient(pUI->getConstantAttenuationCoefficient());
 				pUI->raytracer->setLinearAttenuationCoefficient(pUI->getLinearAttenuationCoefficient());
 				pUI->raytracer->setQuadraticAttenuationCoefficient(pUI->getQuadraticAttenuationCoefficient());
+				pUI->raytracer->setSuperSampling(pUI->getSuperSampling());
 				pUI->raytracer->tracePixel( x, y );
 		
 			}
@@ -287,6 +292,12 @@ double TraceUI::getQuadraticAttenuationCoefficient()
 	return m_nQuadraticAttenuationCoefficient;
 }
 
+int TraceUI::getSuperSampling()
+{
+	return m_nSuperSampling;
+}
+
+
 
 // menu definition
 Fl_Menu_Item TraceUI::menuitems[] = {
@@ -316,6 +327,7 @@ TraceUI::TraceUI() {
 	m_nConstantAttenuationCoefficient = 0.0;
 	m_nLinearAttenuationCoefficient = 0.0;
 	m_nQuadraticAttenuationCoefficient = 0.0;
+	m_nSuperSampling = 0;
 
 	m_mainWindow = new Fl_Window(100, 40, 320, 500, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
@@ -456,6 +468,18 @@ TraceUI::TraceUI() {
 		m_quadraticAttenuationCoeffSlider->value(m_nQuadraticAttenuationCoefficient);
 		m_quadraticAttenuationCoeffSlider->align(FL_ALIGN_RIGHT);
 		m_quadraticAttenuationCoeffSlider->callback(cb_quadraticAttenuationCoeffSlides);
+
+		m_superSamplingSlider = new Fl_Value_Slider(10, 305, 180, 20, "Super Sampling");
+		m_superSamplingSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_superSamplingSlider->type(FL_HOR_NICE_SLIDER);
+		m_superSamplingSlider->labelfont(FL_COURIER);
+		m_superSamplingSlider->labelsize(12);
+		m_superSamplingSlider->minimum(0);
+		m_superSamplingSlider->maximum(6);
+		m_superSamplingSlider->step(1);
+		m_superSamplingSlider->value(m_nSuperSampling);
+		m_superSamplingSlider->align(FL_ALIGN_RIGHT);
+		m_superSamplingSlider->callback(cb_superSamplingSlides);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));
