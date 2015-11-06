@@ -33,6 +33,9 @@ public:
 	void setAntialiasing(int i);
 	void			setAdaptiveThreshold(double d);
 	void		setJitter(int i);
+	void			setConstantAttenuationCoefficient(double d);
+	void			setLinearAttenuationCoefficient(double d);
+	void			setQuadraticAttenuationCoefficient(double d);
 
 private:
 	unsigned char *buffer;
@@ -44,6 +47,9 @@ private:
 	int m_nAntialiasing;
 	int         m_nJitter;
 	double      m_nAdaptiveThreshold;
+	double      m_nConstantAttenuationCoefficient;
+	double      m_nLinearAttenuationCoefficient;
+	double      m_nQuadraticAttenuationCoefficient;
 
 	bool m_bSceneLoaded;
 };

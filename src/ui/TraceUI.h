@@ -34,6 +34,9 @@ public:
 	Fl_Slider*			m_antialiasingSlider;
 	Fl_Slider*			m_adaptiveThresholdSlider;
 	Fl_Slider*			m_jitterSlider;
+	Fl_Slider*			m_constantAttenuationCoeffSlider;
+	Fl_Slider*			m_linearAttenuationCoeffSlider;
+	Fl_Slider*			m_quadraticAttenuationCoeffSlider;
 
 	Fl_Button*			m_renderButton;
 	Fl_Button*			m_stopButton;
@@ -53,6 +56,9 @@ public:
 	int		getAntialiasing();
 	double			getAdaptiveThreshold();
 	int		getJitter();
+	double		getConstantAttenuationCoefficient();
+	double		getLinearAttenuationCoefficient();
+	double		getQuadraticAttenuationCoefficient();
 
 private:
 	RayTracer*	raytracer;
@@ -65,7 +71,10 @@ private:
 	int		m_nAntialiasing;
 	int         m_nJitter;
 	double      m_nAdaptiveThreshold;
-
+	double      m_nConstantAttenuationCoefficient;
+	double      m_nLinearAttenuationCoefficient;
+	double      m_nQuadraticAttenuationCoefficient;
+	
 // static class members
 	static Fl_Menu_Item menuitems[];
 
@@ -86,6 +95,9 @@ private:
 	static void cb_antialiasingSlides(Fl_Widget* o, void* v);
 	static void cb_adaptiveThresholdSlides(Fl_Widget* o, void* v);
 	static void cb_jitterSlides(Fl_Widget* o, void* v);
+	static void cb_constantAttenuationCoeffSlides(Fl_Widget* o, void* v);
+	static void cb_linearAttenuationCoeffSlides(Fl_Widget* o, void* v);
+	static void cb_quadraticAttenuationCoeffSlides(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);

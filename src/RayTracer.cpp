@@ -225,3 +225,15 @@ void RayTracer::setAdaptiveThreshold(double d)
 {
 	m_nAdaptiveThreshold = d;
 }
+void RayTracer::setConstantAttenuationCoefficient(double d)
+{
+	m_nConstantAttenuationCoefficient = d;
+}
+void RayTracer::setLinearAttenuationCoefficient(double d)
+{
+	m_nLinearAttenuationCoefficient = d;
+}
+void RayTracer::setQuadraticAttenuationCoefficient(double d)
+{
+	m_nQuadraticAttenuationCoefficient = d;
+}

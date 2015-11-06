@@ -116,6 +116,18 @@ void TraceUI::cb_jitterSlides(Fl_Widget* o, void* v)
 {
 	((TraceUI*)(o->user_data()))->m_nJitter = int(((Fl_Slider *)o)->value());
 }
+void TraceUI::cb_constantAttenuationCoeffSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nConstantAttenuationCoefficient = double(((Fl_Slider *)o)->value());
+}
+void TraceUI::cb_linearAttenuationCoeffSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nLinearAttenuationCoefficient = double(((Fl_Slider *)o)->value());
+}
+void TraceUI::cb_quadraticAttenuationCoeffSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nQuadraticAttenuationCoefficient = double(((Fl_Slider *)o)->value());
+}
 
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
@@ -174,6 +186,9 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 				pUI->raytracer->setAntialiasing(pUI->getAntialiasing());
 				pUI->raytracer->setJitter(pUI->getJitter());
 				pUI->raytracer->setAdaptiveThreshold(pUI->getAdaptiveThreshold());
+				pUI->raytracer->setConstantAttenuationCoefficient(pUI->getConstantAttenuationCoefficient());
+				pUI->raytracer->setLinearAttenuationCoefficient(pUI->getLinearAttenuationCoefficient());
+				pUI->raytracer->setQuadraticAttenuationCoefficient(pUI->getQuadraticAttenuationCoefficient());
 				pUI->raytracer->tracePixel( x, y );
 		
 			}
@@ -257,6 +272,21 @@ int TraceUI::getJitter()
 	return m_nJitter;
 }
 
+double TraceUI::getConstantAttenuationCoefficient()
+{
+	return m_nConstantAttenuationCoefficient;
+}
+
+double TraceUI::getLinearAttenuationCoefficient()
+{
+	return m_nLinearAttenuationCoefficient;
+}
+
+double TraceUI::getQuadraticAttenuationCoefficient()
+{
+	return m_nQuadraticAttenuationCoefficient;
+}
+
 
 // menu definition
 Fl_Menu_Item TraceUI::menuitems[] = {
@@ -283,6 +313,10 @@ TraceUI::TraceUI() {
 	m_nAntialiasing = 1;
 	m_nJitter = 0;
 	m_nAdaptiveThreshold = 0;
+	m_nConstantAttenuationCoefficient = 0.0;
+	m_nLinearAttenuationCoefficient = 0.0;
+	m_nQuadraticAttenuationCoefficient = 0.0;
+
 	m_mainWindow = new Fl_Window(100, 40, 320, 500, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar
@@ -386,6 +420,42 @@ TraceUI::TraceUI() {
 		m_jitterSlider->value(m_nJitter);
 		m_jitterSlider->align(FL_ALIGN_RIGHT);
 		m_jitterSlider->callback(cb_jitterSlides);
+
+		m_constantAttenuationCoeffSlider = new Fl_Value_Slider(10, 230, 180, 20, "Constant Attenuation Coeff");
+		m_constantAttenuationCoeffSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_constantAttenuationCoeffSlider->type(FL_HOR_NICE_SLIDER);
+		m_constantAttenuationCoeffSlider->labelfont(FL_COURIER);
+		m_constantAttenuationCoeffSlider->labelsize(12);
+		m_constantAttenuationCoeffSlider->minimum(0);
+		m_constantAttenuationCoeffSlider->maximum(1);
+		m_constantAttenuationCoeffSlider->step(0.001);
+		m_constantAttenuationCoeffSlider->value(m_nConstantAttenuationCoefficient);
+		m_constantAttenuationCoeffSlider->align(FL_ALIGN_RIGHT);
+		m_constantAttenuationCoeffSlider->callback(cb_constantAttenuationCoeffSlides);
+
+		m_linearAttenuationCoeffSlider = new Fl_Value_Slider(10, 255, 180, 20, "Linear Attenuation Coeff");
+		m_linearAttenuationCoeffSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_linearAttenuationCoeffSlider->type(FL_HOR_NICE_SLIDER);
+		m_linearAttenuationCoeffSlider->labelfont(FL_COURIER);
+		m_linearAttenuationCoeffSlider->labelsize(12);
+		m_linearAttenuationCoeffSlider->minimum(0);
+		m_linearAttenuationCoeffSlider->maximum(1);
+		m_linearAttenuationCoeffSlider->step(0.001);
+		m_linearAttenuationCoeffSlider->value(m_nLinearAttenuationCoefficient);
+		m_linearAttenuationCoeffSlider->align(FL_ALIGN_RIGHT);
+		m_linearAttenuationCoeffSlider->callback(cb_linearAttenuationCoeffSlides);
+
+		m_quadraticAttenuationCoeffSlider = new Fl_Value_Slider(10, 280, 180, 20, "Quadratic Attenuation Coeff");
+		m_quadraticAttenuationCoeffSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_quadraticAttenuationCoeffSlider->type(FL_HOR_NICE_SLIDER);
+		m_quadraticAttenuationCoeffSlider->labelfont(FL_COURIER);
+		m_quadraticAttenuationCoeffSlider->labelsize(12);
+		m_quadraticAttenuationCoeffSlider->minimum(0);
+		m_quadraticAttenuationCoeffSlider->maximum(1);
+		m_quadraticAttenuationCoeffSlider->step(0.001);
+		m_quadraticAttenuationCoeffSlider->value(m_nQuadraticAttenuationCoefficient);
+		m_quadraticAttenuationCoeffSlider->align(FL_ALIGN_RIGHT);
+		m_quadraticAttenuationCoeffSlider->callback(cb_quadraticAttenuationCoeffSlides);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));
