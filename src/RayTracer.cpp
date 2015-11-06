@@ -499,15 +499,18 @@ void RayTracer::setAdaptiveThreshold(double d)
 }
 void RayTracer::setConstantAttenuationCoefficient(double d)
 {
-	m_nConstantAttenuationCoefficient = d;
+	this->scene->setConstantAttenuationCoefficient(d);
+	this->scene->setCustomDistanceAttenuation(true);
 }
 void RayTracer::setLinearAttenuationCoefficient(double d)
 {
-	m_nLinearAttenuationCoefficient = d;
+	this->scene->setLinearAttenuationCoefficient(d);
+	this->scene->setCustomDistanceAttenuation(true);
 }
 void RayTracer::setQuadraticAttenuationCoefficient(double d)
 {
-	m_nQuadraticAttenuationCoefficient = d;
+	this->scene->setQuadraticAttenuationCoefficient(d);
+	this->scene->setCustomDistanceAttenuation(true);
 }
 void RayTracer::setSuperSampling(int i)
 {

@@ -61,6 +61,7 @@ public:
 	double		getLinearAttenuationCoefficient();
 	double		getQuadraticAttenuationCoefficient();
 	int getSuperSampling();
+	bool      isCustomDistanceAttenuation();
 
 private:
 	RayTracer*	raytracer;
@@ -77,6 +78,7 @@ private:
 	double      m_nLinearAttenuationCoefficient;
 	double      m_nQuadraticAttenuationCoefficient;
 	int m_nSuperSampling;
+	bool      m_bIsCustomDistanceAttenuation;
 	
 // static class members
 	static Fl_Menu_Item menuitems[];

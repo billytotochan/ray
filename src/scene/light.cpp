@@ -53,8 +53,12 @@ double PointLight::distanceAttenuation( const vec3f& P ) const
 	// of the light based on the distance between the source and the 
 	// point P.  For now, I assume no attenuation and just return 1.0
 
-	double cofficient = m_nConstantAttenuationCoefficient + m_nLinearAttenuationCoefficient * sqrt((P - position).length_squared()) + m_nQuadraticAttenuationCoefficient * (P - position).length_squared();
-	return 1.0 / max<double>(cofficient, 1.0);
+	double constantAttenuationCoefficient = (scene->isCustomDistanceAttenuation() ? scene->getConstantAttenuationCoefficient() : m_nConstantAttenuationCoefficient);
+	double linearAttenuationCoefficient = (scene->isCustomDistanceAttenuation() ? scene->getLinearAttenuationCoefficient() : m_nLinearAttenuationCoefficient);
+	double quadraticAttenuationCoefficient = (scene->isCustomDistanceAttenuation() ? scene->getQuadraticAttenuationCoefficient() : m_nQuadraticAttenuationCoefficient);
+
+	double result = constantAttenuationCoefficient + linearAttenuationCoefficient * sqrt((P - position).length_squared()) + quadraticAttenuationCoefficient * (P - position).length_squared();
+	return 1.0 / max<double>(result, 1.0);
 	
 	//return 1.0;
 }

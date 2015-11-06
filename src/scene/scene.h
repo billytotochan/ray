@@ -275,6 +275,14 @@ public:
 	void setAmbientLightRed(double d);
 	void setAmbientLightGreen(double d);
 	void setAmbientLightBlue(double d);
+	void setCustomDistanceAttenuation(bool b);
+	void			setConstantAttenuationCoefficient(double d);
+	void			setLinearAttenuationCoefficient(double d);
+	void			setQuadraticAttenuationCoefficient(double d);
+	bool      isCustomDistanceAttenuation();
+	double		getConstantAttenuationCoefficient();
+	double		getLinearAttenuationCoefficient();
+	double		getQuadraticAttenuationCoefficient();
 
 private:
     list<Geometry*> objects;
@@ -283,6 +291,10 @@ private:
     list<Light*> lights;
 	Camera camera;
 	vec3f ambientLight;
+	double      m_nConstantAttenuationCoefficient;
+	double      m_nLinearAttenuationCoefficient;
+	double      m_nQuadraticAttenuationCoefficient;
+	bool      m_bIsCustomDistanceAttenuation;
 	
 	// Each object in the scene, provided that it has hasBoundingBoxCapability(),
 	// must fall within this bounding box.  Objects that don't have hasBoundingBoxCapability()

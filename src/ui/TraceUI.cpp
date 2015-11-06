@@ -119,14 +119,17 @@ void TraceUI::cb_jitterSlides(Fl_Widget* o, void* v)
 void TraceUI::cb_constantAttenuationCoeffSlides(Fl_Widget* o, void* v)
 {
 	((TraceUI*)(o->user_data()))->m_nConstantAttenuationCoefficient = double(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_bIsCustomDistanceAttenuation = true;
 }
 void TraceUI::cb_linearAttenuationCoeffSlides(Fl_Widget* o, void* v)
 {
 	((TraceUI*)(o->user_data()))->m_nLinearAttenuationCoefficient = double(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_bIsCustomDistanceAttenuation = true;
 }
 void TraceUI::cb_quadraticAttenuationCoeffSlides(Fl_Widget* o, void* v)
 {
 	((TraceUI*)(o->user_data()))->m_nQuadraticAttenuationCoefficient = double(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_bIsCustomDistanceAttenuation = true;
 }
 void TraceUI::cb_superSamplingSlides(Fl_Widget* o, void* v)
 {
@@ -297,6 +300,11 @@ int TraceUI::getSuperSampling()
 	return m_nSuperSampling;
 }
 
+bool TraceUI::isCustomDistanceAttenuation()
+{
+	return m_bIsCustomDistanceAttenuation;
+}
+
 
 
 // menu definition
@@ -328,6 +336,7 @@ TraceUI::TraceUI() {
 	m_nLinearAttenuationCoefficient = 0.0;
 	m_nQuadraticAttenuationCoefficient = 0.0;
 	m_nSuperSampling = 0;
+	m_bIsCustomDistanceAttenuation = false;
 
 	m_mainWindow = new Fl_Window(100, 40, 320, 500, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions

@@ -222,3 +222,38 @@ void Scene::setAmbientLightBlue(double d)
 {
 	ambientLight[2] = d;
 }
+
+void Scene::setConstantAttenuationCoefficient(double d)
+{
+	m_nConstantAttenuationCoefficient = d;
+}
+void Scene::setLinearAttenuationCoefficient(double d)
+{
+	m_nLinearAttenuationCoefficient = d;
+}
+void Scene::setQuadraticAttenuationCoefficient(double d)
+{
+	m_nQuadraticAttenuationCoefficient = d;
+}
+void Scene::setCustomDistanceAttenuation(bool b)
+{
+	m_bIsCustomDistanceAttenuation = b;
+}
+bool Scene::isCustomDistanceAttenuation()
+{
+	return m_bIsCustomDistanceAttenuation;
+}
+double Scene::getConstantAttenuationCoefficient()
+{
+	return m_nConstantAttenuationCoefficient;
+}
+
+double Scene::getLinearAttenuationCoefficient()
+{
+	return m_nLinearAttenuationCoefficient;
+}
+
+double Scene::getQuadraticAttenuationCoefficient()
+{
+	return m_nQuadraticAttenuationCoefficient;
+}
