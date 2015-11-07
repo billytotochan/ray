@@ -232,16 +232,16 @@ vec3f RayTracer::superTrace(double width, double height, double x, double y, int
 		dis[11] = abs(col[2] - d[2]) > 0.0005;
 		if (all_of(begin(dis), end(dis), [](bool i) {
 			return i;
-		})){
-			return col;
-		}
-		else
+		}))
 		{
-			a = superTrace(x - sub_width / 4.0, y - sub_height / 4.0, sub_width / 2.0, sub_height / 2.0, depth - 1);
-			b = superTrace(x - sub_width / 4.0, y + sub_height / 4.0, sub_width / 2.0, sub_height / 2.0, depth - 1);
-			c = superTrace(x + sub_width / 4.0, y - sub_height / 4.0, sub_width / 2.0, sub_height / 2.0, depth - 1);
-			d = superTrace(x + sub_width / 4.0, y + sub_height / 4.0, sub_width / 2.0, sub_height / 2.0, depth - 1);
+			a = superTrace(sub_width, sub_height, x - sub_width / 2.0, y - sub_height / 2.0, depth - 1);
+			b = superTrace(sub_width, sub_height, x - sub_width / 2.0, y + sub_height / 2.0, depth - 1);
+			c = superTrace(sub_width, sub_height, x + sub_width / 2.0, y - sub_height / 2.0, depth - 1);
+			d = superTrace(sub_width, sub_height, x + sub_width / 2.0, y + sub_height / 2.0, depth - 1);
 			return ((a + b + c + d) / 4);
+		}
+		else {
+			return col;
 		}
 	}
 	else {
