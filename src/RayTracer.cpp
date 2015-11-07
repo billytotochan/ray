@@ -210,7 +210,7 @@ vec3f RayTracer::superTrace(double width, double height, double x, double y, int
 		vec3f col;
 		double sub_width = width / 2.0;
 		double sub_height = height / 2.0;
-		bool dis[12];
+		double dis[12];
 		vec3f a, b, c, d;
 		a = trace(scene, x - sub_width, y - sub_height);
 		b = trace(scene, x - sub_width, y + sub_height);
@@ -218,30 +218,30 @@ vec3f RayTracer::superTrace(double width, double height, double x, double y, int
 		d = trace(scene, x + sub_width, y + sub_height);
 		col = (a + b + c + d) / 4;
 
-		dis[0] = abs(col[0] - a[0]) > 0.0005;
-		dis[1] = abs(col[1] - a[1]) > 0.0005;
-		dis[2] = abs(col[2] - a[2]) > 0.0005;
-		dis[3] = abs(col[0] - b[0]) > 0.0005;
-		dis[4] = abs(col[1] - b[1]) > 0.0005;
-		dis[5] = abs(col[2] - b[2]) > 0.0005;
-		dis[6] = abs(col[0] - c[0]) > 0.0005;
-		dis[7] = abs(col[1] - c[1]) > 0.0005;
-		dis[8] = abs(col[2] - c[2]) > 0.0005;
-		dis[9] = abs(col[0] - d[0]) > 0.0005;
-		dis[10] = abs(col[1] - d[1]) > 0.0005;
-		dis[11] = abs(col[2] - d[2]) > 0.0005;
-		if (all_of(begin(dis), end(dis), [](bool i) {
-			return i;
+		dis[0] = abs(col[0] - a[0]);
+		dis[1] = abs(col[1] - a[1]);
+		dis[2] = abs(col[2] - a[2]);
+		dis[3] = abs(col[0] - b[0]);
+		dis[4] = abs(col[1] - b[1]);
+		dis[5] = abs(col[2] - b[2]);
+		dis[6] = abs(col[0] - c[0]);
+		dis[7] = abs(col[1] - c[1]);
+		dis[8] = abs(col[2] - c[2]);
+		dis[9] = abs(col[0] - d[0]);
+		dis[10] = abs(col[1] - d[1]);
+		dis[11] = abs(col[2] - d[2]);
+		if (all_of(begin(dis), end(dis), [](double i) {
+			return i < RAY_EPSILON;
 		}))
 		{
+			return col;
+		}
+		else {
 			a = superTrace(sub_width, sub_height, x - sub_width / 2.0, y - sub_height / 2.0, depth - 1);
 			b = superTrace(sub_width, sub_height, x - sub_width / 2.0, y + sub_height / 2.0, depth - 1);
 			c = superTrace(sub_width, sub_height, x + sub_width / 2.0, y - sub_height / 2.0, depth - 1);
 			d = superTrace(sub_width, sub_height, x + sub_width / 2.0, y + sub_height / 2.0, depth - 1);
 			return ((a + b + c + d) / 4);
-		}
-		else {
-			return col;
 		}
 	}
 	else {
