@@ -329,7 +329,7 @@ TraceUI::TraceUI() {
 	m_nAmbientLightRed = 0.2;
 	m_nAmbientLightGreen = 0.2;
 	m_nAmbientLightBlue = 0.2;
-	m_nAntialiasing = 1;
+	m_nAntialiasing = 0;
 	m_nJitter = 0;
 	m_nAdaptiveThreshold = 0;
 	m_nConstantAttenuationCoefficient = 0.0;
@@ -411,8 +411,8 @@ TraceUI::TraceUI() {
 		m_antialiasingSlider->type(FL_HOR_NICE_SLIDER);
 		m_antialiasingSlider->labelfont(FL_COURIER);
 		m_antialiasingSlider->labelsize(12);
-		m_antialiasingSlider->minimum(1);
-		m_antialiasingSlider->maximum(5);
+		m_antialiasingSlider->minimum(0);
+		m_antialiasingSlider->maximum(1);
 		m_antialiasingSlider->step(1);
 		m_antialiasingSlider->value(m_nAntialiasing);
 		m_antialiasingSlider->align(FL_ALIGN_RIGHT);

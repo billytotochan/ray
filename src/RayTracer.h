@@ -21,8 +21,8 @@ public:
 	void traceSetup( int w, int h );
 	void traceLines( int start = 0, int stop = 10000000 );
 	void tracePixel( int i, int j );
-	vec3f superTrace(double x, double y, double width, double height, int depth, int *iter);
-	vec3f simpleTrace(double x, double y, double width, double height);
+	vec3f superTrace(int i, int j, double x, double y, int depth);
+	vec3f simpleTrace(int i, int j, double x, double y);
 
 	bool loadScene( char* fn );
 

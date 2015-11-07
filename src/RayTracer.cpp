@@ -182,19 +182,15 @@ void RayTracer::traceLines( int start, int stop )
 void RayTracer::tracePixel( int i, int j )
 {
 	vec3f col;
-	int iteration[7] = { 0, 0, 0, 0, 0, 0, 0 };
-
 	if( !scene )
 		return;
 
-	double x = double(i)/double(buffer_width);
-	double y = double(j)/double(buffer_height);
-	double width = 1.0 / double(buffer_width);
-	double height = 1.0 / double(buffer_height);
-
+	double x = double(i) / double(buffer_width);
+	double y = double(j) / double(buffer_height);
+	
 	col = (m_nSuperSampling ? 
-		superTrace(x, y, width, height, m_nSuperSampling, iteration) :
-		trace(scene, x, y) //simpleTrace(x,y,width,height)
+		superTrace(i, j, x, y, m_nSuperSampling) : //BUGS
+		simpleTrace(i, j, x, y)
 	);
 
 	//col = trace( scene,x,y );
@@ -206,263 +202,75 @@ void RayTracer::tracePixel( int i, int j )
 	pixel[2] = (int)( 255.0 * col[2]);
 }
 
-vec3f RayTracer::superTrace(double x, double y, double width, double height, int depth, int *iteration)
+vec3f RayTracer::superTrace(int i, int j, double x, double y, int depth)
 {
-	if (depth>0) {
-		iteration[depth] = 1;
-		vec3f cornerA, cornerB, cornerC, cornerD;
-		vec3f average;
-		int flag = 1;
-		cornerA = trace(scene, x - width / 2.0, y - height / 2.0);
-		cornerB = trace(scene, x - width / 2.0, y + height / 2.0);
-		cornerC = trace(scene, x + width / 2.0, y - height / 2.0);
-		cornerD = trace(scene, x + width / 2.0, y + height / 2.0);
-		average = (cornerA + cornerB + cornerC + cornerD) / 4;
-
-		double dis[12] = {
-			abs(average[0] - cornerA[0]), abs(average[1] - cornerA[1]), abs(average[2] - cornerA[2]),
-			abs(average[0] - cornerB[0]), abs(average[1] - cornerB[1]), abs(average[2] - cornerB[2]),
-			abs(average[0] - cornerC[0]), abs(average[1] - cornerC[1]), abs(average[2] - cornerC[2]),
-			abs(average[0] - cornerD[0]), abs(average[0] - cornerD[1]), abs(average[0] - cornerD[2])
-		};
-
-		for (int i = 0; i<12; i++)
+	vec3f col;
+	double width = 1.0 / double(buffer_width);
+	double height = 1.0 / double(buffer_height);
+	double sub_width = width / depth;
+	double sub_height = height / depth;
+	for (int iteration1 = 0; iteration1 < depth; iteration1++)
+	{
+		double sub_x = x + ((double)j / depth - 0.5) * width;
+		for (int iteration2 = 0; iteration2 < depth; iteration2++)
 		{
-			if (dis[i]>0.005) {
-				flag = 0;
-				break;
-			}
+			double sub_y = y + ((double)i / depth - 0.5) * height;
+
+			double jitter_x = (rand() / (double)RAND_MAX - 0.5) * sub_width + sub_x;
+			double jitter_y = (rand() / (double)RAND_MAX - 0.5) * sub_height + sub_y;
+
+			col += trace(scene, jitter_x, jitter_y);
 		}
-		if (flag == 1) {
-			return average;
+	}
+	col /= depth * depth;
+	return col;
+}
+
+vec3f RayTracer::simpleTrace(int i, int j, double x, double y)
+{
+	vec3f col;
+	vec3f a[9];
+	double m[18];
+	double width = 1.0 / double(buffer_width);
+	double height = 1.0 / double(buffer_height);
+	if (m_nAntialiasing) {
+		if (m_nJitter) {
+			for (int i = 0; i<18; i++)
+			{
+				m[i] = 2.0*(((double)((rand() + i + (int)(y * 1000)) % 5)) / 5.0 - 0.5);
+			}
+			a[0] = trace(scene, x - width / 2.0 + m[0] * width / 4.0, y - height / 2.0 + m[9] * height / 4.0);
+			a[1] = trace(scene, x - width / 2.0 + m[1] * width / 4.0, y + m[10] * height / 4.0);
+			a[2] = trace(scene, x - width / 2.0 + m[2] * width / 4.0, y + height / 2.0 + m[11] * height / 4.0);
+			a[3] = trace(scene, x + m[3] * width / 4.0, y - height / 2.0 + m[12] * height / 4.0);
+			a[4] = trace(scene, x + m[4] * width / 4.0, y + m[13] * height / 4.0);
+			a[5] = trace(scene, x + m[5] * width / 4.0, y + height / 2.0 + m[14] * height / 4.0);
+			a[6] = trace(scene, x + width / 2.0 + m[6] * width / 4.0, y - height / 2.0 + m[15] * height / 4.0);
+			a[7] = trace(scene, x + width / 2.0 + m[7] * width / 4.0, y + m[16] * height / 4.0);
+			a[8] = trace(scene, x + width / 2.0 + m[8] * width / 4.0, y + height / 2.0 + m[17] * height / 4.0);
+			col[0] = 0; col[1] = 0; col[2] = 0;
+			for (int i = 0; i<9; i++)
+				col += a[i];
+			col /= 9;
 		}
 		else {
-			cornerA = superTrace(x - width / 4.0, y - height / 4.0, width / 2.0, height / 2.0, depth - 1, iteration);
-			cornerB = superTrace(x - width / 4.0, y + height / 4.0, width / 2.0, height / 2.0, depth - 1, iteration);
-			cornerC = superTrace(x + width / 4.0, y - height / 4.0, width / 2.0, height / 2.0, depth - 1, iteration);
-			cornerD = superTrace(x + width / 4.0, y + height / 4.0, width / 2.0, height / 2.0, depth - 1, iteration);
-			return ((cornerA + cornerB + cornerC + cornerD) / 4);
+			a[0] = trace(scene, x - width / 2.0, y - height / 2.0);
+			a[1] = trace(scene, x - width / 2.0, y);
+			a[2] = trace(scene, x - width / 2.0, y + height / 2.0);
+			a[3] = trace(scene, x, y - height / 2.0);
+			a[4] = trace(scene, x, y);
+			a[5] = trace(scene, x, y + height / 2.0);
+			a[6] = trace(scene, x + width / 2.0, y - height / 2.0);
+			a[7] = trace(scene, x + width / 2.0, y);
+			a[8] = trace(scene, x + width / 2.0, y + height / 2.0);
+			col[0] = 0; col[1] = 0; col[2] = 0;
+			for (int i = 0; i<9; i++)
+				col += a[i];
+			col /= 9;
 		}
 	}
 	else {
-		return trace(scene, x, y);
-	}
-}
-
-vec3f RayTracer::simpleTrace(double x, double y, double width, double height)
-{
-	vec3f col;
-	vec3f a[25];
-	double m[50];
-	srand((unsigned)time(NULL)); 
-	if(m_nAntialiasing==1)
-	{
-		if(m_nJitter==0)
-		{
-			col = trace( scene, x, y );
-		}
-		else
-		{			
-			m[0] = 2.0*(((double)((rand() + (int)(x*1000))%3))/3.0-0.5);
-			m[1] = 2.0*(((double)((rand() + (int)(y*1000))%3))/3.0-0.5);
-			col = trace(scene, x + m[0]*width/2.0, y+m[1]*height/2.0);
-		}
-	}
-	else if(m_nAntialiasing==2)
-	{
-		if(m_nJitter==0)
-		{
-			a[0] = trace(scene,x-width/2.0,y-height/2.0);
-			a[1] = trace(scene,x-width/2.0,y+height/2.0);
-			a[2] = trace(scene,x+width/2.0,y-height/2.0);
-			a[3] = trace(scene,x+width/2.0,y+height/2.0);
-			col = (a[0]+a[1]+a[2]+a[3])/4;
-		}
-		else
-		{
-			for(int i=0;i<8;i++)
-			{
-				m[i] = 2.0*(((double)((rand() + i + (int)(y*1000))%5))/5.0-0.5);
-			}
-			a[0] = trace(scene,x-width/2.0+m[0]*width/2.0,y-height/2.0+m[4]*height/2.0);
-			a[1] = trace(scene,x-width/2.0+m[1]*width/2.0,y+height/2.0+m[5]*height/2.0);
-			a[2] = trace(scene,x+width/2.0+m[2]*width/2.0,y-height/2.0+m[6]*height/2.0);
-			a[3] = trace(scene,x+width/2.0+m[3]*width/2.0,y+height/2.0+m[7]*height/2.0);
-			col = (a[0]+a[1]+a[2]+a[3])/4;
-		}
-	}
-	else if(m_nAntialiasing==3)
-	{
-		if(m_nJitter==0)
-		{
-			a[0] = trace(scene,x-width/2.0,y-height/2.0);
-			a[1] = trace(scene,x-width/2.0,y);
-			a[2] = trace(scene,x-width/2.0,y+height/2.0);
-			a[3] = trace(scene,x,y-height/2.0);
-			a[4] = trace(scene,x,y);
-			a[5] = trace(scene,x,y+height/2.0);
-			a[6] = trace(scene,x+width/2.0,y-height/2.0);
-			a[7] = trace(scene,x+width/2.0,y);
-			a[8] = trace(scene,x+width/2.0,y+height/2.0);
-			col[0] = col[1] = col[2] = 0;
-			for(int i=0;i<9;i++)
-				col+=a[i];
-			col/=9;
-		}
-		else
-		{
-			for(int i=0;i<18;i++)
-			{
-				m[i] = 2.0*(((double)((rand() + i + (int)(y*1000))%5))/5.0-0.5);
-			}
-			a[0] = trace(scene,x-width/2.0+m[0]*width/4.0,y-height/2.0+m[9]*height/4.0);
-			a[1] = trace(scene,x-width/2.0+m[1]*width/4.0,y+m[10]*height/4.0);
-			a[2] = trace(scene,x-width/2.0+m[2]*width/4.0,y+height/2.0+m[11]*height/4.0);
-			a[3] = trace(scene,x+m[3]*width/4.0,y-height/2.0+m[12]*height/4.0);
-			a[4] = trace(scene,x+m[4]*width/4.0,y+m[13]*height/4.0);
-			a[5] = trace(scene,x+m[5]*width/4.0,y+height/2.0+m[14]*height/4.0);
-			a[6] = trace(scene,x+width/2.0+m[6]*width/4.0,y-height/2.0+m[15]*height/4.0);
-			a[7] = trace(scene,x+width/2.0+m[7]*width/4.0,y+m[16]*height/4.0);
-			a[8] = trace(scene, x + width / 2.0 + m[8] * width / 4.0, y + height / 2.0 + m[17] * height / 4.0);
-			col[0] = col[1] = col[2] = 0;
-			for(int i=0;i<9;i++)
-				col+=a[i];
-			col/=9;
-		}
-	}
-	else if(m_nAntialiasing==4)
-	{
-		if(m_nJitter==0)
-		{
-			a[0]  = trace(scene,x-width/2.0,y-height/2.0);
-			a[1]  = trace(scene,x-width/2.0,y-height/6.0);
-			a[2]  = trace(scene,x-width/2.0,y+height/6.0);
-			a[3]  = trace(scene,x-width/2.0,y+height/2.0);
-			a[4]  = trace(scene,x-width/6.0,y-height/2.0);
-			a[5]  = trace(scene,x-width/6.0,y-height/6.0);
-			a[6]  = trace(scene,x-width/6.0,y+height/6.0);
-			a[7]  = trace(scene,x-width/6.0,y+height/2.0);
-			a[8]  = trace(scene,x+width/6.0,y-height/2.0);
-			a[9]  = trace(scene,x+width/6.0,y-height/6.0);
-			a[10] = trace(scene,x+width/6.0,y+height/6.0);
-			a[11] = trace(scene,x+width/6.0,y+height/2.0);
-			a[12] = trace(scene,x+width/2.0,y-height/2.0);
-			a[13] = trace(scene,x+width/2.0,y-height/6.0);
-			a[14] = trace(scene,x+width/2.0,y+height/6.0);
-			a[15] = trace(scene, x + width / 2.0, y + height / 2.0);
-			col[0] = col[1] = col[2] = 0;
-			for(int i=0;i<16;i++)
-				col+=a[i];
-			col/=16;
-		}
-		else
-		{
-			for(int i=0;i<32;i++)
-			{
-				m[i] = 2.0*(((double)((rand() + i + (int)(y*1000))%5))/5.0-0.5);
-			}
-			a[0]  = trace(scene,x-width/2.0+m[0]*width/6.0,y-height/2.0+m[16]*height/6.0);
-			a[1]  = trace(scene,x-width/2.0+m[1]*width/6.0,y-height/6.0+m[17]*width/6.0);
-			a[2]  = trace(scene,x-width/2.0+m[2]*width/6.0,y+height/6.0+m[18]*width/6.0);
-			a[3]  = trace(scene,x-width/2.0+m[3]*width/6.0,y+height/2.0+m[19]*width/6.0);
-			a[4]  = trace(scene,x-width/6.0+m[4]*width/6.0,y-height/2.0+m[20]*width/6.0);
-			a[5]  = trace(scene,x-width/6.0+m[5]*width/6.0,y-height/6.0+m[21]*width/6.0);
-			a[6]  = trace(scene,x-width/6.0+m[6]*width/6.0,y+height/6.0+m[22]*width/6.0);
-			a[7]  = trace(scene,x-width/6.0+m[7]*width/6.0,y+height/2.0+m[23]*width/6.0);
-			a[8]  = trace(scene,x+width/6.0+m[8]*width/6.0,y-height/2.0+m[24]*width/6.0);
-			a[9]  = trace(scene,x+width/6.0+m[9]*width/6.0,y-height/6.0+m[25]*width/6.0);
-			a[10] = trace(scene,x+width/6.0+m[10]*width/6.0,y+height/6.0+m[26]*width/6.0);
-			a[11] = trace(scene,x+width/6.0+m[11]*width/6.0,y+height/2.0+m[27]*width/6.0);
-			a[12] = trace(scene,x+width/2.0+m[12]*width/6.0,y-height/2.0+m[28]*width/6.0);
-			a[13] = trace(scene,x+width/2.0+m[13]*width/6.0,y-height/6.0+m[29]*width/6.0);
-			a[14] = trace(scene,x+width/2.0+m[14]*width/6.0,y+height/6.0+m[30]*width/6.0);
-			a[15] = trace(scene, x + width / 2.0 + m[15] * width / 6.0, y + height / 2.0 + m[31] * width / 6.0);
-			col[0] = col[1] = col[2] = 0;
-			for(int i=0;i<16;i++)
-				col+=a[i];
-			col/=16;
-		}
-	}
-	else 
-	{
-		if(m_nJitter==0)
-		{
-			a[0]  = trace(scene,x-width/2.0,y-height/2.0);
-			a[1]  = trace(scene,x-width/2.0,y-height/4.0);
-			a[2]  = trace(scene,x-width/2.0,y);
-			a[3]  = trace(scene,x-width/2.0,y+height/4.0);
-			a[4]  = trace(scene,x-width/2.0,y+height/2.0);
-
-			a[5]  = trace(scene,x-width/4.0,y-height/2.0);
-			a[6]  = trace(scene,x-width/4.0,y-height/4.0);
-			a[7]  = trace(scene,x-width/4.0,y);
-			a[8]  = trace(scene,x-width/4.0,y+height/4.0);
-			a[9]  = trace(scene,x-width/4.0,y+height/2.0);
-
-			a[10] = trace(scene,x,y-height/2.0);
-			a[11] = trace(scene,x,y-height/4.0);
-			a[12] = trace(scene,x,y);
-			a[13] = trace(scene,x,y+height/4.0);
-			a[14] = trace(scene,x,y+height/2.0);
-
-			a[15] = trace(scene,x+width/4.0,y-height/2.0);
-			a[16] = trace(scene,x+width/4.0,y-height/4.0);
-			a[17] = trace(scene,x+width/4.0,y);
-			a[18] = trace(scene,x+width/4.0,y+height/4.0);
-			a[19] = trace(scene,x+width/4.0,y+height/2.0);
-
-			a[20] = trace(scene,x+width/2.0,y-height/2.0);
-			a[21] = trace(scene,x+width/2.0,y-height/4.0);
-			a[22] = trace(scene,x+width/2.0,y);
-			a[23] = trace(scene,x+width/2.0,y+height/4.0);
-			a[24] = trace(scene,x+width/2.0,y+height/2.0);
-
-			col[0] = col[1] = col[2] = 0;
-			for(int i=0;i<25;i++)
-				col+=a[i];
-			col/=25;
-		}
-		else
-		{
-			for(int i=0;i<50;i++)
-			{
-				m[i] = 2.0*(((double)((rand() + i + (int)(y*1000))%5))/5.0-0.5);
-			}
-			a[0]  = trace(scene,x-width/2.0+m[0]*width/8.0,y-height/2.0+m[25]*height/8.0);
-			a[1]  = trace(scene,x-width/2.0+m[1]*width/8.0,y-height/4.0+m[26]*height/8.0);
-			a[2]  = trace(scene,x-width/2.0+m[2]*width/8.0,y+m[27]*height/8.0);
-			a[3]  = trace(scene,x-width/2.0+m[3]*width/8.0,y+height/4.0+m[28]*height/8.0);
-			a[4]  = trace(scene,x-width/2.0+m[4]*width/8.0,y+height/2.0+m[29]*height/8.0);
-
-			a[5]  = trace(scene,x-width/4.0+m[5]*width/8.0,y-height/2.0+m[30]*height/8.0);
-			a[6]  = trace(scene,x-width/4.0+m[6]*width/8.0,y-height/4.0+m[31]*height/8.0);
-			a[7]  = trace(scene,x-width/4.0+m[7]*width/8.0,y+m[32]*height/8.0);
-			a[8]  = trace(scene,x-width/4.0+m[8]*width/8.0,y+height/4.0+m[33]*height/8.0);
-			a[9]  = trace(scene,x-width/4.0+m[9]*width/8.0,y+height/2.0+m[34]*height/8.0);
-
-			a[10] = trace(scene,x+m[10]*width/8.0,y-height/2.0+m[35]*height/8.0);
-			a[11] = trace(scene,x+m[11]*width/8.0,y-height/4.0+m[36]*height/8.0);
-			a[12] = trace(scene,x+m[12]*width/8.0,y+m[37]*height/8.0);
-			a[13] = trace(scene,x+m[13]*width/8.0,y+height/4.0+m[38]*height/8.0);
-			a[14] = trace(scene,x+m[14]*width/8.0,y+height/2.0+m[39]*height/8.0);
-
-			a[15] = trace(scene,x+width/4.0+m[15]*width/8.0,y-height/2.0+m[40]*height/8.0);
-			a[16] = trace(scene,x+width/4.0+m[16]*width/8.0,y-height/4.0+m[41]*height/8.0);
-			a[17] = trace(scene,x+width/4.0+m[17]*width/8.0,y+m[42]*height/8.0);
-			a[18] = trace(scene,x+width/4.0+m[18]*width/8.0,y+height/4.0+m[43]*height/8.0);
-			a[19] = trace(scene,x+width/4.0+m[19]*width/8.0,y+height/2.0+m[44]*height/8.0);
-
-			a[20] = trace(scene,x+width/2.0+m[20]*width/8.0,y-height/2.0+m[45]*height/8.0);
-			a[21] = trace(scene,x+width/2.0+m[21]*width/8.0,y-height/4.0+m[46]*height/8.0);
-			a[22] = trace(scene,x+width/2.0+m[22]*width/8.0,y+m[47]*height/8.0);
-			a[23] = trace(scene,x+width/2.0+m[23]*width/8.0,y+height/4.0+m[48]*height/8.0);
-			a[24] = trace(scene,x+width/2.0+m[24]*width/8.0,y+height/2.0+m[49]*height/8.0);
-
-			col[0] = col[1] = col[2] = 0;
-			for(int i=0;i<25;i++)
-				col+=a[i];
-			col/=25;
-		}
+		col = trace(scene, x, y);
 	}
 	return col;
 }
