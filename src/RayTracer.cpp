@@ -187,10 +187,12 @@ void RayTracer::tracePixel( int i, int j )
 
 	double x = double(i) / double(buffer_width);
 	double y = double(j) / double(buffer_height);
+	double width = 1.0 / double(buffer_width);
+	double height = 1.0 / double(buffer_height);
 	
 	col = (m_nSuperSampling ? 
-		superTrace(i, j, x, y, m_nSuperSampling) : //BUGS
-		simpleTrace(i, j, x, y)
+		superTrace(width, height, x, y, m_nSuperSampling) : //BUGS
+		simpleTrace(width, height, x, y)
 	);
 
 	//col = trace( scene,x,y );
@@ -202,37 +204,56 @@ void RayTracer::tracePixel( int i, int j )
 	pixel[2] = (int)( 255.0 * col[2]);
 }
 
-vec3f RayTracer::superTrace(int i, int j, double x, double y, int depth)
+vec3f RayTracer::superTrace(double width, double height, double x, double y, int depth)
 {
-	vec3f col;
-	double width = 1.0 / double(buffer_width);
-	double height = 1.0 / double(buffer_height);
-	double sub_width = width / depth;
-	double sub_height = height / depth;
-	for (int iteration1 = 0; iteration1 < depth; iteration1++)
-	{
-		double sub_x = x + ((double)j / depth - 0.5) * width;
-		for (int iteration2 = 0; iteration2 < depth; iteration2++)
+	if (depth) {
+		vec3f col;
+		double sub_width = width / 2.0;
+		double sub_height = height / 2.0;
+		bool dis[12];
+		vec3f a, b, c, d;
+		a = trace(scene, x - sub_width, y - sub_height);
+		b = trace(scene, x - sub_width, y + sub_height);
+		c = trace(scene, x + sub_width, y - sub_height);
+		d = trace(scene, x + sub_width, y + sub_height);
+		col = (a + b + c + d) / 4;
+
+		dis[0] = abs(col[0] - a[0]) > 0.0005;
+		dis[1] = abs(col[1] - a[1]) > 0.0005;
+		dis[2] = abs(col[2] - a[2]) > 0.0005;
+		dis[3] = abs(col[0] - b[0]) > 0.0005;
+		dis[4] = abs(col[1] - b[1]) > 0.0005;
+		dis[5] = abs(col[2] - b[2]) > 0.0005;
+		dis[6] = abs(col[0] - c[0]) > 0.0005;
+		dis[7] = abs(col[1] - c[1]) > 0.0005;
+		dis[8] = abs(col[2] - c[2]) > 0.0005;
+		dis[9] = abs(col[0] - d[0]) > 0.0005;
+		dis[10] = abs(col[1] - d[1]) > 0.0005;
+		dis[11] = abs(col[2] - d[2]) > 0.0005;
+		if (all_of(begin(dis), end(dis), [](bool i) {
+			return i;
+		})){
+			return col;
+		}
+		else
 		{
-			double sub_y = y + ((double)i / depth - 0.5) * height;
-
-			double jitter_x = (rand() / (double)RAND_MAX - 0.5) * sub_width + sub_x;
-			double jitter_y = (rand() / (double)RAND_MAX - 0.5) * sub_height + sub_y;
-
-			col += trace(scene, jitter_x, jitter_y);
+			a = superTrace(x - sub_width / 4.0, y - sub_height / 4.0, sub_width / 2.0, sub_height / 2.0, depth - 1);
+			b = superTrace(x - sub_width / 4.0, y + sub_height / 4.0, sub_width / 2.0, sub_height / 2.0, depth - 1);
+			c = superTrace(x + sub_width / 4.0, y - sub_height / 4.0, sub_width / 2.0, sub_height / 2.0, depth - 1);
+			d = superTrace(x + sub_width / 4.0, y + sub_height / 4.0, sub_width / 2.0, sub_height / 2.0, depth - 1);
+			return ((a + b + c + d) / 4);
 		}
 	}
-	col /= depth * depth;
-	return col;
+	else {
+		return trace(scene, x, y);
+	}
 }
 
-vec3f RayTracer::simpleTrace(int i, int j, double x, double y)
+vec3f RayTracer::simpleTrace(double width, double height, double x, double y)
 {
 	vec3f col;
 	vec3f a[9];
 	double m[18];
-	double width = 1.0 / double(buffer_width);
-	double height = 1.0 / double(buffer_height);
 	if (m_nAntialiasing) {
 		if (m_nJitter) {
 			for (int i = 0; i<18; i++)
