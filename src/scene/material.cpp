@@ -26,7 +26,7 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 
 	list<Light*>::const_iterator it;
 	for (it = scene->beginLights(); it != scene->endLights(); it++){
-		vec3f attenuation = (*it)->distanceAttenuation(point) * (*it)->shadowAttenuation(point);
+		vec3f attenuation = (*it)->distanceAttenuation(point) * (*it)->shadowAttenuation(point + i.N*RAY_EPSILON);
 
 		vec3f incidentLight = ((*it)->getDirection( point)).normalize();
 		vec3f reflectLight = -(incidentLight + 2 * -incidentLight.dot(i.N) * i.N.normalize()).normalize();

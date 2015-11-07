@@ -254,44 +254,53 @@ vec3f RayTracer::simpleTrace(double width, double height, double x, double y)
 	vec3f col;
 	vec3f a[9];
 	double m[18];
+	double sub_width = width / 2.0;
+	double sub_height = height / 2.0;
 	if (m_nAntialiasing) {
 		if (m_nJitter) {
 			for (int i = 0; i<18; i++)
 			{
 				m[i] = 2.0*(((double)((rand() + i + (int)(y * 1000)) % 5)) / 5.0 - 0.5);
 			}
-			a[0] = trace(scene, x - width / 2.0 + m[0] * width / 4.0, y - height / 2.0 + m[9] * height / 4.0);
-			a[1] = trace(scene, x - width / 2.0 + m[1] * width / 4.0, y + m[10] * height / 4.0);
-			a[2] = trace(scene, x - width / 2.0 + m[2] * width / 4.0, y + height / 2.0 + m[11] * height / 4.0);
-			a[3] = trace(scene, x + m[3] * width / 4.0, y - height / 2.0 + m[12] * height / 4.0);
-			a[4] = trace(scene, x + m[4] * width / 4.0, y + m[13] * height / 4.0);
-			a[5] = trace(scene, x + m[5] * width / 4.0, y + height / 2.0 + m[14] * height / 4.0);
-			a[6] = trace(scene, x + width / 2.0 + m[6] * width / 4.0, y - height / 2.0 + m[15] * height / 4.0);
-			a[7] = trace(scene, x + width / 2.0 + m[7] * width / 4.0, y + m[16] * height / 4.0);
-			a[8] = trace(scene, x + width / 2.0 + m[8] * width / 4.0, y + height / 2.0 + m[17] * height / 4.0);
-			col[0] = 0; col[1] = 0; col[2] = 0;
+			a[0] = trace(scene, x - sub_width + m[0] * sub_width / 2.0, y - sub_height + m[9] * sub_height / 2.0);
+			a[1] = trace(scene, x - sub_width + m[1] * sub_width / 2.0, y + m[10] * sub_height / 2.0);
+			a[2] = trace(scene, x - sub_width + m[2] * sub_width / 2.0, y + sub_height + m[11] * sub_height / 2.0);
+			a[3] = trace(scene, x + m[3] * sub_width / 2.0, y - sub_height + m[12] * sub_height / 2.0);
+			a[4] = trace(scene, x + m[4] * sub_width / 2.0, y + m[13] * sub_height / 2.0);
+			a[5] = trace(scene, x + m[5] * sub_width / 2.0, y + sub_height + m[14] * sub_height / 2.0);
+			a[6] = trace(scene, x + sub_width + m[6] * sub_width / 2.0, y - sub_height + m[15] * sub_height / 2.0);
+			a[7] = trace(scene, x + sub_width + m[7] * sub_width / 2.0, y + m[16] * sub_height / 2.0);
+			a[8] = trace(scene, x + sub_width + m[8] * sub_width / 2.0, y + sub_height + m[17] * sub_height / 2.0);
+			col[0] = col[1] = col[2] = 0;
 			for (int i = 0; i<9; i++)
 				col += a[i];
 			col /= 9;
 		}
 		else {
-			a[0] = trace(scene, x - width / 2.0, y - height / 2.0);
-			a[1] = trace(scene, x - width / 2.0, y);
-			a[2] = trace(scene, x - width / 2.0, y + height / 2.0);
-			a[3] = trace(scene, x, y - height / 2.0);
+			a[0] = trace(scene, x - sub_width, y - sub_height);
+			a[1] = trace(scene, x - sub_width, y);
+			a[2] = trace(scene, x - sub_width, y + sub_height);
+			a[3] = trace(scene, x, y - sub_height);
 			a[4] = trace(scene, x, y);
-			a[5] = trace(scene, x, y + height / 2.0);
-			a[6] = trace(scene, x + width / 2.0, y - height / 2.0);
-			a[7] = trace(scene, x + width / 2.0, y);
-			a[8] = trace(scene, x + width / 2.0, y + height / 2.0);
-			col[0] = 0; col[1] = 0; col[2] = 0;
+			a[5] = trace(scene, x, y + sub_height);
+			a[6] = trace(scene, x + sub_width, y - sub_height);
+			a[7] = trace(scene, x + sub_width, y);
+			a[8] = trace(scene, x + sub_width, y + sub_height);
+			col[0] = col[1] = col[2] = 0;
 			for (int i = 0; i<9; i++)
 				col += a[i];
 			col /= 9;
 		}
 	}
 	else {
-		col = trace(scene, x, y);
+		if (m_nJitter) {
+			m[0] = 2.0*(((double)((rand() + (int)(x * 1000)) % 3)) / 3.0 - 0.5);
+			m[1] = 2.0*(((double)((rand() + (int)(y * 1000)) % 3)) / 3.0 - 0.5);
+			col = trace(scene, x + m[0] * sub_width, y + m[1] * sub_height);
+		}
+		else {
+			col = trace(scene, x, y);
+		}
 	}
 	return col;
 }
